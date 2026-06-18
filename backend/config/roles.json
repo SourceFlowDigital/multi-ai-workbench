@@ -1,0 +1,10 @@
+[
+  {"id": "executive_manager", "name": "执行经理", "role": "任务分发与汇总"},
+  {"id": "analyst", "name": "数据分析师", "role": "数据分析与洞察"},
+  {"id": "researcher", "name": "研究员", "role": "深度研究与资料收集"},
+  {"id": "writer", "name": "文案策划", "role": "文案撰写与编辑"},
+  {"id": "engineer", "name": "技术顾问", "role": "技术方案与代码审查"},
+  {"id": "strategist", "name": "策略师", "role": "商业策略与决策建议"},
+  {"id": "compliance", "name": "合规官", "role": "政策合规与风险把控"},
+  {"id": "critic", "name": "毒舌审查员", "role": "魔鬼辩护人，找出方案漏洞"}
+]
