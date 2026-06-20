@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Workspace · GM 原型</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+  body { font-family: 'Inter', 'Noto Sans SC', system-ui, sans-serif; }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800 overflow-hidden h-screen">
+
+<div class="flex h-screen" id="app"></div>
+
+<script type="text/babel">
+const { useState } = React;
+
+const BentoCard = ({ children, className = '' }) => (
+  React.createElement('div', {
+    className: `bg-white rounded-2xl p-6 shadow-[0_2px_10px_rgba(0,0,0,0.02)] border-none flex flex-col ${className}`
+  }, children)
+);
+
+const Sidebar = () => (
+  React.createElement('aside', {
+    className: 'w-[240px] h-screen bg-white border-r border-gray-100 flex flex-col p-6 shadow-[1px_0_15px_rgba(0,0,0,0.01)] shrink-0'
+  },
+    React.createElement('div', { className: 'text-xl font-bold text-gray-800 mb-8' }, 'AI Workspace'),
+    React.createElement('nav', { className: 'flex flex-col gap-2 flex-1' },
+      React.createElement('button', { className: 'text-left px-4 py-2 rounded-lg bg-blue-50 text-blue-600 font-medium' }, '工作台'),
+      React.createElement('button', { className: 'text-left px-4 py-2 rounded-lg text-gray-500 hover:bg-gray-50 transition-colors' }, 'AI 代理矩阵'),
+      React.createElement('button', { className: 'text-left px-4 py-2 rounded-lg text-gray-500 hover:bg-gray-50 transition-colors' }, '任务日志'),
+      React.createElement('button', { className: 'text-left px-4 py-2 rounded-lg text-gray-500 hover:bg-gray-50 transition-colors' }, '数据源')
+    )
+  )
+);
+
+const Header = () => (
+  React.createElement('header', {
+    className: 'h-16 flex items-center justify-between px-8 bg-transparent'
+  },
+    React.createElement('h1', { className: 'text-xl font-semibold text-gray-800' }, '指挥中心'),
+    React.createElement('div', { className: 'flex gap-4 text-sm font-medium' },
+      React.createElement('span', { className: 'flex items-center gap-2 bg-green-50 text-green-700 px-3 py-1.5 rounded-full' },
+        React.createElement('span', { className: 'w-2 h-2 rounded-full bg-green-500' }),
+        'ChatGPT (在线)'
+      ),
+      React.createElement('span', { className: 'flex items-center gap-2 bg-green-50 text-green-700 px-3 py-1.5 rounded-full' },
+        React.createElement('span', { className: 'w-2 h-2 rounded-full bg-green-500' }),
+        'Claude (空闲)'
+      )
+    )
+  )
+);
+
+function AIWorkspace() {
+  return React.createElement('div', { className: 'flex h-screen bg-gray-50 text-gray-800 overflow-hidden' },
+    React.createElement(Sidebar),
+    React.createElement('main', { className: 'flex-1 flex flex-col overflow-y-auto' },
+      React.createElement(Header),
+      React.createElement('div', { className: 'p-8 pt-2 grid grid-cols-4 gap-6 flex-1 auto-rows-max' },
+
+        // 卡片 A
+        React.createElement(BentoCard, { className: 'col-span-2 h-[400px]' },
+          React.createElement('h2', { className: 'text-lg font-semibold mb-4 text-gray-800' }, '卡片 A: 指挥官交互区'),
+          React.createElement('div', { className: 'flex-1 overflow-y-auto space-y-4 mb-4 text-sm text-gray-600' },
+            React.createElement('div', { className: 'bg-gray-50 p-3 rounded-xl inline-block rounded-tl-sm' }, '帮我设计一个电商数据分析架构。'),
+            React.createElement('div', { className: 'flex justify-end' },
+              React.createElement('div', { className: 'bg-blue-50 p-3 rounded-xl inline-block rounded-tr-sm text-blue-800' }, '正在为你拆解任务并分配给 DeepSeek...')
+            )
+          ),
+          React.createElement('div', { className: 'flex gap-2 mt-auto' },
+            React.createElement('input', { type: 'text', placeholder: '输入指令...', className: 'flex-1 bg-gray-50 rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-100 transition-all text-sm' }),
+            React.createElement('button', { className: 'bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-xl text-sm font-medium transition-colors' }, '执行')
+          )
+        ),
+
+        // 卡片 B
+        React.createElement(BentoCard, { className: 'col-span-2 h-[400px]' },
+          React.createElement('h2', { className: 'text-lg font-semibold mb-4 text-gray-800' }, '卡片 B: 执行层实时状态'),
+          React.createElement('div', { className: 'flex-1 bg-[#1F2937] rounded-xl p-4 font-mono text-sm text-gray-300 overflow-y-auto' },
+            React.createElement('p', { className: 'text-green-400' }, '> DeepSeek 正在生成代码...'),
+            React.createElement('p', { className: 'mt-2' }, '> 进度: [██████░░░░] 60%'),
+            React.createElement('p', { className: 'mt-2' }, '> 正在解析依赖树...'),
+            React.createElement('p', { className: 'mt-4 text-gray-500' }, '资源消耗: 1,240 Tokens')
+          )
+        ),
+
+        // 卡片 C
+        React.createElement(BentoCard, { className: 'col-span-2 min-h-[300px]' },
+          React.createElement('h2', { className: 'text-lg font-semibold mb-4 text-gray-800' }, '卡片 C: 客观数据与输出结果'),
+          React.createElement('div', { className: 'overflow-x-auto' },
+            React.createElement('table', { className: 'w-full text-sm text-left text-gray-500' },
+              React.createElement('thead', { className: 'text-xs text-gray-700 uppercase bg-gray-50 rounded-lg' },
+                React.createElement('tr', {},
+                  React.createElement('th', { className: 'px-4 py-3 rounded-tl-lg' }, '数据源'),
+                  React.createElement('th', { className: 'px-4 py-3' }, '状态'),
+                  React.createElement('th', { className: 'px-4 py-3 rounded-tr-lg' }, '提取结果')
+                )
+              ),
+              React.createElement('tbody', {},
+                React.createElement('tr', { className: 'border-b border-gray-50' },
+                  React.createElement('td', { className: 'px-4 py-3 font-medium text-gray-800' }, '行业政策原文'),
+                  React.createElement('td', { className: 'px-4 py-3' },
+                    React.createElement('span', { className: 'bg-green-100 text-green-700 px-2 py-1 rounded text-xs' }, '已完成')
+                  ),
+                  React.createElement('td', { className: 'px-4 py-3' }, 'JSON 数据包')
+                )
+              )
+            )
+          )
+        ),
+
+        // 卡片 D
+        React.createElement(BentoCard, { className: 'col-span-1 min-h-[300px]' },
+          React.createElement('h2', { className: 'text-lg font-semibold mb-4 text-gray-800' }, '卡片 D: API 健康度'),
+          React.createElement('div', { className: 'space-y-4' },
+            React.createElement('div', { className: 'flex justify-between items-center p-3 bg-gray-50 rounded-xl' },
+              React.createElement('span', { className: 'text-sm font-medium text-gray-700' }, 'OpenAI'),
+              React.createElement('span', { className: 'w-2 h-2 rounded-full bg-green-500' })
+            ),
+            React.createElement('div', { className: 'flex justify-between items-center p-3 bg-gray-50 rounded-xl' },
+              React.createElement('span', { className: 'text-sm font-medium text-gray-700' }, 'Anthropic'),
+              React.createElement('span', { className: 'w-2 h-2 rounded-full bg-green-500' })
+            ),
+            React.createElement('div', { className: 'flex justify-between items-center p-3 bg-gray-50 rounded-xl' },
+              React.createElement('span', { className: 'text-sm font-medium text-gray-700' }, 'DeepSeek'),
+              React.createElement('span', { className: 'w-2 h-2 rounded-full bg-yellow-400 animate-pulse' })
+            )
+          )
+        ),
+
+        // 卡片 E
+        React.createElement(BentoCard, { className: 'col-span-1 min-h-[300px]' },
+          React.createElement('h2', { className: 'text-lg font-semibold mb-4 text-gray-800' }, '卡片 E: 工具箱'),
+          React.createElement('div', { className: 'grid grid-cols-2 gap-3' },
+            React.createElement('button', { className: 'p-4 bg-gray-50 hover:bg-gray-100 rounded-xl flex flex-col items-center justify-center gap-2 transition-colors' },
+              React.createElement('span', { className: 'text-xl' }, '📁'),
+              React.createElement('span', { className: 'text-xs font-medium text-gray-600' }, '脚本管理')
+            ),
+            React.createElement('button', { className: 'p-4 bg-gray-50 hover:bg-gray-100 rounded-xl flex flex-col items-center justify-center gap-2 transition-colors' },
+              React.createElement('span', { className: 'text-xl' }, '🧹'),
+              React.createElement('span', { className: 'text-xs font-medium text-gray-600' }, '清理缓存')
+            )
+          )
+        )
+
+      )
+    )
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('app')).render(React.createElement(AIWorkspace));
+</script>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</body>
+</html>

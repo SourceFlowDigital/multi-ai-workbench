@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>源流决策台 · 多AI协同决策工作台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --navy-0:#040a16;
+  --navy-1:#060e1c;
+  --navy-2:#0a1526;
+  --navy-3:#0f1d33;
+  --navy-4:#14243d;
+  --blue:#1E5FA8;
+  --blue-bright:#3d86d8;
+  --blue-deep:#0d3a6b;
+  --gold:#C9A84C;
+  --gold-bright:#E8D29A;
+  --ink:#eaf0fa;
+  --muted:#93a4bd;
+  --muted-dim:#5e7088;
+  --line:rgba(146,170,205,.14);
+  --line-strong:rgba(146,170,205,.24);
+  --success:#55d38a;
+  --danger:#ff6b7a;
+  --warning:#f2c66d;
+  --grad-gold:linear-gradient(135deg,#F0E2B4 0%,#C9A84C 46%,#8d6e28 100%);
+  --grad-steel:linear-gradient(135deg,#d6e6fb 0%,#3d86d8 42%,#0d3a6b 100%);
+  --glass:linear-gradient(165deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
+  --shadow:0 26px 70px rgba(0,0,0,.42);
+  --maxw:1480px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  min-height:100vh;
+  font-family:"Noto Sans SC","Space Grotesk",system-ui,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(80% 70% at 78% -4%,rgba(30,95,168,.30),transparent 58%),
+    radial-gradient(70% 64% at 8% 100%,rgba(201,168,76,.13),transparent 56%),
+    linear-gradient(180deg,var(--navy-0),var(--navy-1) 42%,var(--navy-2));
+  -webkit-font-smoothing:antialiased;
+  line-height:1.55;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background-image:
+    linear-gradient(var(--line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(95% 70% at 50% 20%,#000 20%,transparent 78%);
+  opacity:.36;
+}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+.en{font-family:"Space Grotesk",sans-serif}
+.gold-text{background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;color:transparent}
+.steel-text{background:var(--grad-steel);-webkit-background-clip:text;background-clip:text;color:transparent}
+.app-shell{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:24px 34px 38px}
+
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:40;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:26px;
+  min-height:74px;
+  padding:12px 0;
+  background:linear-gradient(180deg,rgba(6,14,28,.94),rgba(6,14,28,.72));
+  backdrop-filter:blur(18px) saturate(140%);
+  border-bottom:1px solid rgba(146,170,205,.10);
+}
+.brand{display:flex;align-items:center;gap:14px;min-width:230px}
+.brand-mark{
+  width:42px;height:42px;border-radius:14px;
+  display:grid;place-items:center;
+  background:linear-gradient(150deg,rgba(201,168,76,.20),rgba(30,95,168,.24));
+  border:1px solid rgba(201,168,76,.34);
+  box-shadow:0 0 26px rgba(30,95,168,.28), inset 0 0 18px rgba(255,255,255,.04);
+  color:var(--gold-bright);
+  font-family:"Space Grotesk";font-weight:700;
+}
+.brand-copy{display:flex;flex-direction:column;line-height:1.05}
+.brand-copy b{font-size:18px;letter-spacing:2px}
+.brand-copy span{margin-top:7px;font-family:"Space Grotesk";font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase}
+.tabbar{
+  display:flex;align-items:center;gap:6px;
+  padding:6px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(255,255,255,.035);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.02);
+}
+.tab-btn{
+  border:0;
+  min-width:116px;
+  border-radius:999px;
+  padding:11px 18px;
+  background:transparent;
+  color:var(--muted);
+  transition:color .25s,background .25s,box-shadow .25s,transform .25s;
+}
+.tab-btn:hover{color:var(--ink);background:rgba(255,255,255,.045)}
+.tab-btn.active{
+  color:#241a06;
+  font-weight:800;
+  background:var(--grad-gold);
+  box-shadow:0 10px 24px rgba(201,168,76,.26);
+}
+.top-actions{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;min-width:230px;justify-content:flex-end}
+.storage-pill{border:1px solid rgba(201,168,76,.24);border-radius:999px;padding:8px 12px;background:rgba(201,168,76,.055)}
+
+.tab-panel{display:none;animation:panelIn .36s ease both;padding-top:26px}
+.tab-panel.active{display:block}
+@keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.hero-strip{
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:end;
+  gap:24px;
+  margin:10px 0 24px;
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  margin-bottom:14px;
+  font-family:"Space Grotesk";
+  color:var(--gold-bright);
+  font-size:12px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--grad-gold)}
+h1{font-size:clamp(28px,4vw,54px);font-weight:900;letter-spacing:2px;line-height:1.08}
+.hero-copy p{margin-top:14px;color:var(--muted);max-width:790px;font-size:15.5px}
+.metrics{display:flex;gap:12px;align-items:stretch}
+.metric{
+  min-width:118px;
+  padding:16px 18px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:rgba(255,255,255,.035);
+}
+.metric b{display:block;font-family:"Space Grotesk";font-size:25px;line-height:1;color:var(--ink)}
+.metric span{display:block;margin-top:8px;font-size:12px;color:var(--muted)}
+
+.glass{
+  position:relative;
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:var(--glass);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.glass::before{
+  content:"";
+  position:absolute;inset:0;border-radius:inherit;padding:1px;
+  background:linear-gradient(140deg,rgba(201,168,76,.52),transparent 37%,transparent 60%,rgba(61,134,216,.48));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  opacity:.46;
+  pointer-events:none;
+}
+.glass:hover{border-color:rgba(201,168,76,.24)}
+
+.command-card{padding:22px}
+.command-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px}
+.command-head h2,.section-title{font-size:18px;font-weight:800;letter-spacing:1px}
+.hint{font-size:13px;color:var(--muted)}
+.prompt-row{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:stretch}
+.prompt-box{
+  min-height:118px;
+  width:100%;
+  resize:vertical;
+  border:1px solid rgba(146,170,205,.18);
+  border-radius:18px;
+  outline:none;
+  background:rgba(4,10,22,.54);
+  color:var(--ink);
+  padding:18px 20px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.02);
+  transition:border-color .25s,box-shadow .25s;
+}
+.prompt-box:focus{border-color:rgba(201,168,76,.52);box-shadow:0 0 0 4px rgba(201,168,76,.08)}
+.primary-btn,.ghost-btn,.mini-btn,.danger-btn{
+  border:1px solid transparent;
+  border-radius:999px;
+  transition:transform .22s,box-shadow .22s,background .22s,border-color .22s,color .22s;
+  white-space:nowrap;
+}
+.primary-btn{
+  min-width:148px;
+  padding:0 26px;
+  color:#241a06;
+  font-weight:900;
+  background:var(--grad-gold);
+  box-shadow:0 10px 28px rgba(201,168,76,.32);
+}
+.primary-btn:hover,.ghost-btn:hover,.mini-btn:hover{transform:translateY(-2px)}
+.primary-btn:disabled{opacity:.56;cursor:not-allowed;transform:none;box-shadow:none}
+.ghost-btn{
+  background:rgba(255,255,255,.035);
+  border-color:var(--line-strong);
+  color:var(--ink);
+  padding:11px 16px;
+}
+.mini-btn{
+  background:rgba(61,134,216,.12);
+  border-color:rgba(61,134,216,.24);
+  color:#cfe3ff;
+  padding:8px 12px;
+  font-size:12px;
+}
+.danger-btn{
+  background:rgba(255,107,122,.12);
+  border-color:rgba(255,107,122,.30);
+  color:#ffc6cd;
+  padding:8px 12px;
+  font-size:12px;
+}
+.workflow-grid{
+  display:grid;
+  grid-template-columns:minmax(270px,.75fr) minmax(0,2fr);
+  gap:18px;
+  margin-top:18px;
+}
+.task-breakdown{padding:20px;min-height:280px}
+.placeholder{
+  color:var(--muted-dim);
+  border:1px dashed rgba(146,170,205,.22);
+  border-radius:16px;
+  padding:24px;
+  min-height:190px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.task-list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.task-item{
+  padding:12px 13px;
+  border-radius:14px;
+  border:1px solid rgba(146,170,205,.13);
+  background:rgba(255,255,255,.028);
+  color:var(--muted);
+  font-size:13px;
+}
+.task-item b{display:block;color:var(--ink);font-size:14px;margin-bottom:4px}
+.role-zone{padding:20px}
+.role-grid{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:14px;
+  margin-top:16px;
+}
+.role-panel{
+  min-height:230px;
+  border:1px solid rgba(146,170,205,.14);
+  border-radius:18px;
+  background:linear-gradient(165deg,rgba(255,255,255,.045),rgba(255,255,255,.015));
+  padding:15px;
+  transition:transform .28s,border-color .28s,box-shadow .28s;
+  position:relative;
+  overflow:hidden;
+}
+.role-panel:hover{transform:translateY(-4px);box-shadow:0 18px 42px rgba(3,9,20,.42);border-color:rgba(201,168,76,.28)}
+.role-panel::after{
+  content:"";
+  position:absolute;right:-46px;top:-46px;width:110px;height:110px;border-radius:50%;
+  background:radial-gradient(circle,rgba(61,134,216,.26),transparent 70%);
+  opacity:.45;
+  pointer-events:none;
+}
+.role-panel.running{border-color:rgba(232,210,154,.55);animation:breathing 1.5s ease-in-out infinite alternate}
+.role-panel.done{border-color:rgba(85,211,138,.65);box-shadow:0 0 0 1px rgba(85,211,138,.12),0 18px 42px rgba(85,211,138,.08)}
+.role-panel.error{border-color:rgba(255,107,122,.70);animation:errorFlash .9s ease-in-out infinite}
+@keyframes breathing{from{box-shadow:0 0 0 rgba(232,210,154,0)}to{box-shadow:0 0 26px rgba(232,210,154,.22)}}
+@keyframes errorFlash{0%,100%{box-shadow:0 0 0 rgba(255,107,122,0)}50%{box-shadow:0 0 24px rgba(255,107,122,.28)}}
+.role-top{display:flex;gap:11px;align-items:center;position:relative;z-index:1}
+.avatar{
+  width:38px;height:38px;border-radius:14px;
+  display:grid;place-items:center;
+  background:linear-gradient(145deg,rgba(201,168,76,.16),rgba(61,134,216,.22));
+  border:1px solid rgba(232,210,154,.22);
+  font-family:"Space Grotesk";font-weight:700;color:var(--gold-bright);
+  flex:0 0 auto;
+}
+.role-name{font-size:14px;font-weight:800;line-height:1.2}
+.role-duty{margin-top:3px;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:122px}
+.status-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  margin-top:13px;
+  border-radius:999px;
+  border:1px solid rgba(146,170,205,.18);
+  background:rgba(4,10,22,.42);
+  color:var(--muted);
+  padding:6px 9px;
+  font-size:12px;
+  position:relative;z-index:1;
+}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--muted-dim)}
+.running .status-dot{background:var(--gold-bright);box-shadow:0 0 12px var(--gold)}
+.done .status-dot{background:var(--success);box-shadow:0 0 12px rgba(85,211,138,.7)}
+.error .status-dot{background:var(--danger);box-shadow:0 0 12px rgba(255,107,122,.7)}
+.role-output{
+  margin-top:12px;
+  border-top:1px solid rgba(146,170,205,.10);
+  padding-top:12px;
+  color:#c8d5e7;
+  font-size:12.5px;
+  max-height:105px;
+  overflow:auto;
+  position:relative;
+  z-index:1;
+}
+.collapse-btn{
+  margin-top:10px;
+  border:0;
+  background:transparent;
+  color:var(--blue-bright);
+  font-size:12px;
+  position:relative;
+  z-index:1;
+}
+.role-panel.collapsed{min-height:150px}
+.role-panel.collapsed .role-output{display:none}
+
+.summary-panel{
+  display:none;
+  margin-top:18px;
+  padding:22px;
+  border-color:rgba(201,168,76,.30);
+  animation:summaryIn .5s ease both;
+}
+.summary-panel.show{display:block}
+@keyframes summaryIn{from{opacity:0;transform:translateY(12px) scale(.99)}to{opacity:1;transform:none}}
+.summary-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-top:14px}
+.summary-main,.summary-side{
+  border:1px solid rgba(146,170,205,.12);
+  border-radius:16px;
+  padding:18px;
+  background:rgba(4,10,22,.34);
+}
+.summary-main h3,.summary-side h3{font-size:16px;margin-bottom:10px}
+.summary-main p,.summary-side li{color:var(--muted);font-size:14px}
+.summary-side ul{padding-left:18px}
+
+.config-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+}
+.role-card{padding:18px;min-height:236px}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:12px}
+.card-head h3{font-size:17px}
+.card-duty{color:var(--muted);font-size:13.5px;min-height:44px}
+.field{display:flex;flex-direction:column;gap:7px;margin-top:14px}
+.field label{font-size:12px;color:var(--muted);letter-spacing:.5px}
+.select,.input{
+  width:100%;
+  border:1px solid rgba(146,170,205,.18);
+  border-radius:12px;
+  background:rgba(4,10,22,.50);
+  padding:11px 12px;
+  outline:none;
+}
+.input:focus,.select:focus{border-color:rgba(201,168,76,.48)}
+details.prompt-preview{
+  margin-top:13px;
+  border:1px solid rgba(146,170,205,.12);
+  border-radius:12px;
+  background:rgba(4,10,22,.28);
+  overflow:hidden;
+}
+details.prompt-preview summary{padding:10px 12px;color:var(--gold-bright);font-size:12px;cursor:pointer}
+.prompt-preview pre{
+  white-space:pre-wrap;
+  color:#b9c7da;
+  font-size:12px;
+  padding:0 12px 12px;
+  font-family:"Noto Sans SC",sans-serif;
+}
+.config-footer{
+  margin-top:18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+.notice{color:var(--muted);font-size:13px}
+
+.api-layout{display:grid;grid-template-columns:minmax(390px,.9fr) minmax(0,1.35fr);gap:18px}
+.api-card,.matrix-card{padding:20px}
+.api-list{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.api-row{
+  display:grid;
+  grid-template-columns:112px 1fr auto auto;
+  gap:10px;
+  align-items:center;
+  padding:12px;
+  border:1px solid rgba(146,170,205,.13);
+  border-radius:16px;
+  background:rgba(255,255,255,.025);
+}
+.platform-name{font-weight:800}
+.api-key{font-family:"Space Grotesk",monospace}
+.api-status{
+  min-width:72px;
+  text-align:center;
+  border-radius:999px;
+  padding:6px 8px;
+  font-size:12px;
+  color:var(--muted);
+  background:rgba(146,170,205,.08);
+  border:1px solid rgba(146,170,205,.13);
+}
+.api-status.ok{color:#bff6d5;background:rgba(85,211,138,.10);border-color:rgba(85,211,138,.28)}
+.api-status.fail{color:#ffc6cd;background:rgba(255,107,122,.10);border-color:rgba(255,107,122,.28)}
+.matrix-wrap{overflow:auto;margin-top:16px;border:1px solid rgba(146,170,205,.12);border-radius:16px}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th,td{padding:13px 14px;border-bottom:1px solid rgba(146,170,205,.10);text-align:center;font-size:13px}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:rgba(8,18,34,.94)}
+th{color:var(--gold-bright);font-size:12px;font-weight:700;letter-spacing:.5px;background:rgba(201,168,76,.04)}
+tr:last-child td{border-bottom:0}
+.check{
+  width:18px;height:18px;
+  accent-color:var(--gold);
+}
+
+.modal-backdrop{
+  position:fixed;inset:0;z-index:100;
+  display:none;place-items:center;
+  background:rgba(2,7,15,.72);
+  backdrop-filter:blur(12px);
+  padding:24px;
+}
+.modal-backdrop.show{display:grid}
+.modal{
+  width:min(560px,100%);
+  padding:22px;
+}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.modal-head h2{font-size:20px}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.toast{
+  position:fixed;
+  right:28px;
+  bottom:28px;
+  z-index:120;
+  min-width:240px;
+  transform:translateY(18px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s,transform .25s;
+  padding:13px 15px;
+  border:1px solid rgba(201,168,76,.25);
+  border-radius:14px;
+  background:rgba(8,18,34,.92);
+  box-shadow:0 14px 40px rgba(0,0,0,.42);
+  color:var(--ink);
+}
+.toast.show{opacity:1;transform:none}
+
+@media(max-width:1180px){
+  .role-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .config-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero-strip,.workflow-grid,.api-layout,.summary-grid{grid-template-columns:1fr}
+  .metrics{justify-content:flex-start}
+  .top-actions{display:none}
+}
+@media(max-width:760px){
+  .app-shell{padding:16px}
+  .topbar{position:relative;align-items:flex-start;flex-direction:column}
+  .tabbar{width:100%;justify-content:space-between;border-radius:18px}
+  .tab-btn{min-width:0;flex:1;padding:10px 8px}
+  .prompt-row{grid-template-columns:1fr}
+  .primary-btn{min-height:50px}
+  .role-grid,.config-grid{grid-template-columns:1fr}
+  .api-row{grid-template-columns:1fr}
+  .metrics{flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">YL</div>
+      <div class="brand-copy">
+        <b>源流决策台</b>
+        <span>Sourceflow Decision</span>
+      </div>
+    </div>
+    <nav class="tabbar" aria-label="主导航">
+      <button class="tab-btn active" data-tab="workspace">工作台</button>
+      <button class="tab-btn" data-tab="roles">角色配置</button>
+      <button class="tab-btn" data-tab="api">API 配置</button>
+    </nav>
+    <div class="top-actions">
+      <span class="storage-pill">本地浏览器存储</span>
+    </div>
+  </header>
+
+  <main>
+    <section id="workspace" class="tab-panel active">
+      <div class="hero-strip">
+        <div class="hero-copy">
+          <div class="eyebrow">Multi AI Command Center</div>
+          <h1>把棘手问题交给一支<span class="gold-text">AI 角色团队</span></h1>
+          <p>输入一个研究问题，执行经理拆解任务，各职能角色并行输出，最后形成一份可供你判断的简明汇总。当前原型仅验证交互流程，不调用真实 API。</p>
+        </div>
+        <div class="metrics">
+          <div class="metric"><b id="metricRoles">9</b><span>默认角色</span></div>
+          <div class="metric"><b id="metricModels">4</b><span>模型平台</span></div>
+          <div class="metric"><b>Local</b><span>Key 自持</span></div>
+        </div>
+      </div>
+
+      <section class="glass command-card">
+        <div class="command-head">
+          <div>
+            <h2>总经理任务入口</h2>
+            <p class="hint">Enter 提交，Shift + Enter 换行</p>
+          </div>
+          <button class="ghost-btn" id="resetRunBtn">清空演示</button>
+        </div>
+        <div class="prompt-row">
+          <textarea id="researchInput" class="prompt-box" placeholder="输入你要研究的问题...">请评估“多AI协同决策工作台”作为桌面端买断制产品的可行性，并给出最小验证路径。</textarea>
+          <button id="startBtn" class="primary-btn">开始分析</button>
+        </div>
+      </section>
+
+      <div class="workflow-grid">
+        <section class="glass task-breakdown">
+          <div class="command-head">
+            <h2>任务拆解</h2>
+            <span class="hint" id="breakdownStatus">等待输入</span>
+          </div>
+          <div id="taskBreakdown" class="placeholder">开始分析后，执行经理会先拆解目标、风险、调研和汇总任务。</div>
+        </section>
+
+        <section class="glass role-zone">
+          <div class="command-head">
+            <div>
+              <h2>角色并行面板</h2>
+              <p class="hint">2 行 5 列桌面网格，最后一个为自定义角色位</p>
+            </div>
+            <button class="ghost-btn" id="randomErrorBtn">模拟异常</button>
+          </div>
+          <div id="roleGrid" class="role-grid"></div>
+        </section>
+      </div>
+
+      <section id="summaryPanel" class="glass summary-panel">
+        <div class="command-head">
+          <div>
+            <h2>执行经理汇总</h2>
+            <p class="hint">汇总完成后自动弹出</p>
+          </div>
+          <button class="mini-btn" id="copySummaryBtn">复制摘要</button>
+        </div>
+        <div class="summary-grid">
+          <div class="summary-main">
+            <h3>结论草案</h3>
+            <p id="summaryText">等待角色完成输出。</p>
+          </div>
+          <div class="summary-side">
+            <h3>下一步建议</h3>
+            <ul id="nextSteps"></ul>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section id="roles" class="tab-panel">
+      <div class="hero-strip">
+        <div class="hero-copy">
+          <div class="eyebrow">Role Library</div>
+          <h1>预设角色库与<span class="steel-text">模型绑定</span></h1>
+          <p>每个角色都有职责、绑定模型和 System Prompt 预览。所有调整只保存在当前浏览器。</p>
+        </div>
+      </div>
+      <div id="roleConfigGrid" class="config-grid"></div>
+      <div class="config-footer">
+        <p class="notice">提示：所有配置仅存储在本浏览器 localStorage，不会上传服务器。</p>
+        <button id="newRoleBtn" class="primary-btn" style="min-height:48px">+ 新建自定义角色</button>
+      </div>
+    </section>
+
+    <section id="api" class="tab-panel">
+      <div class="hero-strip">
+        <div class="hero-copy">
+          <div class="eyebrow">API Keys</div>
+          <h1>多平台 Key 管理与<span class="gold-text">角色分配矩阵</span></h1>
+          <p>这里模拟 Claude / DeepSeek / GPT / 自定义平台配置。测试连接只做前端状态反馈，不发起真实网络请求。</p>
+        </div>
+      </div>
+      <div class="api-layout">
+        <section class="glass api-card">
+          <div class="command-head">
+            <h2>API Key 配置</h2>
+            <button id="addPlatformBtn" class="ghost-btn">+ 添加平台</button>
+          </div>
+          <div id="apiList" class="api-list"></div>
+        </section>
+        <section class="glass matrix-card">
+          <div class="command-head">
+            <div>
+              <h2>角色-模型分配矩阵</h2>
+              <p class="hint">行=角色，列=已配置平台</p>
+            </div>
+          </div>
+          <div id="matrixWrap" class="matrix-wrap"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="roleModal" class="modal-backdrop" aria-hidden="true">
+  <section class="glass modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <h2 id="modalTitle">新建自定义角色</h2>
+      <button class="mini-btn" id="closeModalBtn">关闭</button>
+    </div>
+    <div class="field">
+      <label for="customName">角色名称</label>
+      <input id="customName" class="input" placeholder="例如：渠道增长顾问" />
+    </div>
+    <div class="field">
+      <label for="customDuty">职责简述</label>
+      <input id="customDuty" class="input" placeholder="一句话描述这个角色负责什么" />
+    </div>
+    <div class="field">
+      <label for="customDomain">擅长领域</label>
+      <input id="customDomain" class="input" placeholder="例如：获客、私域、定价、渠道合作" />
+    </div>
+    <div class="field">
+      <label for="customModel">绑定模型</label>
+      <select id="customModel" class="select"></select>
+    </div>
+    <div class="modal-actions">
+      <button class="ghost-btn" id="cancelRoleBtn">取消</button>
+      <button class="primary-btn" id="saveRoleBtn" style="min-height:46px">保存角色</button>
+    </div>
+  </section>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const STORAGE_KEY = "sourceflow_decision_console_v1";
+
+const defaultPlatforms = [
+  { id:"claude", name:"Claude", key:"", status:"未测试" },
+  { id:"deepseek", name:"DeepSeek", key:"", status:"未测试" },
+  { id:"gpt", name:"GPT", key:"", status:"未测试" },
+  { id:"custom", name:"自定义", key:"", status:"未测试" }
+];
+
+const defaultRoles = [
+  { id:"exec", name:"执行经理", initials:"EM", duty:"拆解任务、分发角色、汇总输出", model:"Claude", domain:"任务拆解 / 结构化汇报", prompt:"你是执行经理。先拆解复杂问题，安排各角色并行研究，最后只做简明汇总，不替用户做最终决策。" },
+  { id:"strategy", name:"战略顾问", initials:"ST", duty:"判断定位、赛道与机会窗口", model:"Claude", domain:"战略判断 / 商业定位", prompt:"你是战略顾问。关注定位是否成立、竞争格局、时机窗口和资源取舍。" },
+  { id:"market", name:"市场研究员", initials:"MR", duty:"分析目标用户、需求和竞品", model:"GPT", domain:"市场调研 / 用户洞察", prompt:"你是市场研究员。围绕用户画像、痛点强度、竞品替代方案和付费意愿进行分析。" },
+  { id:"product", name:"产品经理", initials:"PM", duty:"梳理 MVP、流程与验收指标", model:"Claude", domain:"产品设计 / MVP", prompt:"你是产品经理。把想法变成可验证流程，拆出 MVP、交互路径和验证指标。" },
+  { id:"tech", name:"技术架构师", initials:"TA", duty:"评估实现路径、复杂度与风险", model:"GPT", domain:"前端 / 本地存储 / API 调用", prompt:"你是技术架构师。关注可实现性、复杂度、数据安全、扩展性和最小技术路径。" },
+  { id:"finance", name:"商业模型师", initials:"BM", duty:"估算定价、成本和回本路径", model:"DeepSeek", domain:"定价 / 成本 / 收益", prompt:"你是商业模型师。关注成本、定价、销量、回本周期和现金流压力。" },
+  { id:"risk", name:"风险审查官", initials:"RK", duty:"提出失败原因和退出条件", model:"DeepSeek", domain:"风险 / 合规 / 机会成本", prompt:"你是风险审查官。优先找反例、失败路径、高风险假设和退出条件。" },
+  { id:"ops", name:"运营设计师", initials:"OP", duty:"设计自用验证和推广动作", model:"DeepSeek", domain:"运营 / 增长 / 使用习惯", prompt:"你是运营设计师。关注自用验证、用户教育、获客路径和低成本推广。" },
+  { id:"custom_slot", name:"自定义角色位", initials:"CR", duty:"留给当前任务的特殊专家", model:"自定义", domain:"可按任务临时配置", prompt:"你是自定义专家。根据任务补足预设角色没有覆盖的专业视角。" }
+];
+
+const roleOutputs = {
+  exec:["已识别任务目标：验证多AI协同是否比单一AI更省力。","建议按可行性、交互价值、技术成本、商业验证四条线并行研究。"],
+  strategy:["定位差异成立：不是搭工作流，而是模拟组织指挥。","关键风险在于用户是否愿意配置 API Key，需优先验证认知门槛。"],
+  market:["目标用户更像已重度使用 AI 的一人公司创业者。","竞品替代主要是 Claude 项目、扣子、Taskade 和手工多窗口协作。"],
+  product:["MVP 应只保留任务入口、角色面板、模型配置、汇总输出。","不要提前做复杂多轮讨论，先验证并行视角是否有价值。"],
+  tech:["静态网页 + localStorage 可以完成第一阶段验证。","正式桌面端可用 Tauri 或 Electron，API 调用保留在本地。"],
+  finance:["¥99 买断需要低获客成本，否则开发时间难回本。","早期更适合先自用 30 天，再找 10 个种子用户付费验证。"],
+  risk:["最大风险不是技术，而是用户嫌麻烦。","退出条件应写清：自用 3 个月仍不高频使用则停止商业化。"],
+  ops:["建议用真实棘手问题做连续 2 周日志。","每次记录：耗时、输出质量、是否减少来回追问。"],
+  custom_slot:["可临时配置为行业专家、销售顾问或政策顾问。","本次可补充桌面应用封装与买断制交付体验建议。"]
+};
+
+let state = loadState();
+let runTimers = [];
+
+function loadState(){
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if(saved){
+    try{
+      const parsed = JSON.parse(saved);
+      return {
+        roles: parsed.roles?.length ? parsed.roles : defaultRoles,
+        platforms: parsed.platforms?.length ? parsed.platforms : defaultPlatforms,
+        matrix: parsed.matrix || {}
+      };
+    }catch(e){}
+  }
+  return { roles: defaultRoles, platforms: defaultPlatforms, matrix:{} };
+}
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  updateMetrics();
+}
+function showToast(message){
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(()=>toast.classList.remove("show"),2200);
+}
+function updateMetrics(){
+  document.getElementById("metricRoles").textContent = state.roles.length;
+  document.getElementById("metricModels").textContent = state.platforms.length;
+}
+
+document.querySelectorAll(".tab-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById(btn.dataset.tab).classList.add("active");
+  });
+});
+
+function statusLabel(status){
+  return {idle:"空闲",running:"执行中",done:"已完成",error:"异常"}[status] || "空闲";
+}
+function renderRolePanels(statusMap = {}, outputMap = {}){
+  const grid = document.getElementById("roleGrid");
+  grid.innerHTML = "";
+  state.roles.forEach(role=>{
+    const status = statusMap[role.id] || "idle";
+    const panel = document.createElement("article");
+    panel.className = `role-panel ${status}`;
+    panel.dataset.role = role.id;
+    panel.innerHTML = `
+      <div class="role-top">
+        <div class="avatar">${role.initials || role.name.slice(0,2)}</div>
+        <div>
+          <div class="role-name">${role.name}</div>
+          <div class="role-duty">${role.duty}</div>
+        </div>
+      </div>
+      <div class="status-pill"><span class="status-dot"></span><span>${statusLabel(status)}</span></div>
+      <div class="role-output">${outputMap[role.id] || "等待任务分发。"}</div>
+      <button class="collapse-btn" type="button">折叠内容</button>
+    `;
+    panel.querySelector(".collapse-btn").addEventListener("click",e=>{
+      panel.classList.toggle("collapsed");
+      e.currentTarget.textContent = panel.classList.contains("collapsed") ? "展开内容" : "折叠内容";
+    });
+    grid.appendChild(panel);
+  });
+}
+
+function renderTasks(loading=false){
+  const box = document.getElementById("taskBreakdown");
+  const status = document.getElementById("breakdownStatus");
+  if(loading){
+    status.textContent = "拆解中";
+    box.className = "placeholder";
+    box.textContent = "执行经理正在识别问题边界、角色分工和输出格式...";
+    return;
+  }
+  status.textContent = "已完成";
+  box.className = "task-list";
+  const tasks = [
+    ["问题定界","确认研究目标、决策边界和不确定假设。"],
+    ["并行分工","按战略、市场、产品、技术、商业、风险、运营分发任务。"],
+    ["独立输出","每个角色给出短结论、证据点和风险提醒。"],
+    ["执行汇总","执行经理整合分歧与共同结论，形成下一步建议。"]
+  ];
+  box.innerHTML = tasks.map(t=>`<div class="task-item"><b>${t[0]}</b>${t[1]}</div>`).join("");
+}
+
+function clearRun(){
+  runTimers.forEach(clearTimeout);
+  runTimers = [];
+  document.getElementById("breakdownStatus").textContent = "等待输入";
+  const box = document.getElementById("taskBreakdown");
+  box.className = "placeholder";
+  box.textContent = "开始分析后，执行经理会先拆解目标、风险、调研和汇总任务。";
+  document.getElementById("summaryPanel").classList.remove("show");
+  renderRolePanels();
+}
+
+function typeAppend(roleId, text){
+  const panel = document.querySelector(`[data-role="${roleId}"] .role-output`);
+  if(panel){ panel.innerHTML = text; }
+}
+
+function startAnalysis(){
+  const input = document.getElementById("researchInput");
+  const question = input.value.trim();
+  if(!question){ showToast("请先输入要研究的问题"); return; }
+  clearRun();
+  const startBtn = document.getElementById("startBtn");
+  startBtn.disabled = true;
+  startBtn.textContent = "分析中";
+  renderTasks(true);
+  const statusMap = {};
+  const outputMap = {};
+  state.roles.forEach(r=>{ statusMap[r.id] = "idle"; outputMap[r.id] = "等待执行经理分发任务。"; });
+  renderRolePanels(statusMap, outputMap);
+
+  runTimers.push(setTimeout(()=>{
+    renderTasks(false);
+    state.roles.forEach((role,index)=>{
+      runTimers.push(setTimeout(()=>{
+        statusMap[role.id] = "running";
+        outputMap[role.id] = "正在生成观点...";
+        renderRolePanels(statusMap, outputMap);
+        const lines = roleOutputs[role.id] || [`已从“${question.slice(0,18)}...”中提取本角色关注点。`,"建议进入下一轮人工判断。"];
+        runTimers.push(setTimeout(()=>{
+          statusMap[role.id] = "done";
+          outputMap[role.id] = lines.map(line=>`<p>${line}</p>`).join("");
+          renderRolePanels(statusMap, outputMap);
+          if(Object.values(statusMap).filter(s=>s==="done" || s==="error").length === state.roles.length){
+            finishSummary();
+          }
+        }, 850 + index * 90));
+      }, index * 360));
+    });
+  },2000));
+}
+
+function finishSummary(){
+  const panel = document.getElementById("summaryPanel");
+  const summary = "初步判断：该产品适合作为自用验证型原型继续推进，但商业化前必须先验证 API Key 配置门槛、连续使用频率和真实省时效果。建议用 2 周真实问题测试，保留极简流程，不提前扩展复杂工作流。";
+  document.getElementById("summaryText").textContent = summary;
+  document.getElementById("nextSteps").innerHTML = [
+    "连续 2 周用真实创业问题测试，每周不少于 5 次。",
+    "记录单次耗时、输出质量、是否减少多窗口切换。",
+    "若自用高频成立，再找 10 位种子用户付费验证。"
+  ].map(x=>`<li>${x}</li>`).join("");
+  panel.classList.add("show");
+  document.getElementById("startBtn").disabled = false;
+  document.getElementById("startBtn").textContent = "开始分析";
+  showToast("汇总已完成");
+}
+
+document.getElementById("startBtn").addEventListener("click", startAnalysis);
+document.getElementById("researchInput").addEventListener("keydown", e=>{
+  if(e.key === "Enter" && !e.shiftKey){
+    e.preventDefault();
+    startAnalysis();
+  }
+});
+document.getElementById("resetRunBtn").addEventListener("click", clearRun);
+document.getElementById("randomErrorBtn").addEventListener("click",()=>{
+  const panels = [...document.querySelectorAll(".role-panel")];
+  if(!panels.length) return;
+  const panel = panels[Math.floor(Math.random()*panels.length)];
+  panel.classList.remove("idle","running","done");
+  panel.classList.add("error");
+  panel.querySelector(".status-pill span:last-child").textContent = "异常";
+  panel.querySelector(".role-output").textContent = "模拟异常：当前模型未配置 Key 或连接超时。";
+});
+document.getElementById("copySummaryBtn").addEventListener("click",async()=>{
+  const text = document.getElementById("summaryText").textContent;
+  try{ await navigator.clipboard.writeText(text); showToast("摘要已复制"); }
+  catch(e){ showToast("当前浏览器不支持自动复制"); }
+});
+
+function platformNames(){ return state.platforms.map(p=>p.name); }
+function renderRoleConfig(){
+  const grid = document.getElementById("roleConfigGrid");
+  const modelOptions = platformNames().map(name=>`<option value="${name}">${name}</option>`).join("");
+  grid.innerHTML = "";
+  state.roles.forEach(role=>{
+    const card = document.createElement("article");
+    card.className = "glass role-card";
+    card.innerHTML = `
+      <div class="card-head">
+        <div>
+          <h3>${role.name}</h3>
+          <p class="card-duty">${role.duty}</p>
+        </div>
+        <div class="avatar">${role.initials || role.name.slice(0,2)}</div>
+      </div>
+      <div class="field">
+        <label>绑定模型</label>
+        <select class="select model-select" data-role="${role.id}">
+          ${modelOptions}
+        </select>
+      </div>
+      <details class="prompt-preview">
+        <summary>System Prompt 预览</summary>
+        <pre>${role.prompt}</pre>
+      </details>
+    `;
+    const select = card.querySelector(".model-select");
+    select.value = role.model;
+    select.addEventListener("change",e=>{
+      role.model = e.target.value;
+      saveState();
+      renderMatrix();
+      showToast(`${role.name} 已绑定 ${role.model}`);
+    });
+    grid.appendChild(card);
+  });
+  renderCustomModelOptions();
+}
+
+function renderApiList(){
+  const list = document.getElementById("apiList");
+  list.innerHTML = "";
+  state.platforms.forEach(platform=>{
+    const row = document.createElement("div");
+    row.className = "api-row";
+    const statusClass = platform.status === "已连接" ? "ok" : platform.status === "失败" ? "fail" : "";
+    row.innerHTML = `
+      <div class="platform-name">${platform.name}</div>
+      <input class="input api-key" type="password" placeholder="输入 ${platform.name} API Key" value="${platform.key || ""}" data-platform="${platform.id}" />
+      <span class="api-status ${statusClass}">${platform.status}</span>
+      <button class="mini-btn test-btn" data-platform="${platform.id}">测试连接</button>
+    `;
+    row.querySelector(".api-key").addEventListener("input",e=>{
+      platform.key = e.target.value;
+      platform.status = "未测试";
+      saveState();
+      renderApiList();
+    });
+    row.querySelector(".test-btn").addEventListener("click",()=>{
+      platform.status = platform.key.trim().length > 6 ? "已连接" : "失败";
+      saveState();
+      renderApiList();
+      renderMatrix();
+      showToast(`${platform.name}：${platform.status}`);
+    });
+    list.appendChild(row);
+  });
+}
+
+function renderMatrix(){
+  const wrap = document.getElementById("matrixWrap");
+  const cols = state.platforms;
+  const head = `<tr><th>角色</th>${cols.map(p=>`<th>${p.name}</th>`).join("")}</tr>`;
+  const rows = state.roles.map(role=>{
+    const cells = cols.map(p=>{
+      const key = `${role.id}:${p.id}`;
+      if(state.matrix[key] === undefined){ state.matrix[key] = role.model === p.name; }
+      return `<td><input class="check matrix-check" type="checkbox" data-key="${key}" ${state.matrix[key] ? "checked" : ""}></td>`;
+    }).join("");
+    return `<tr><td><b>${role.name}</b><br><span style="color:var(--muted);font-size:12px">${role.duty}</span></td>${cells}</tr>`;
+  }).join("");
+  wrap.innerHTML = `<table>${head}${rows}</table>`;
+  wrap.querySelectorAll(".matrix-check").forEach(check=>{
+    check.addEventListener("change",e=>{
+      state.matrix[e.target.dataset.key] = e.target.checked;
+      saveState();
+    });
+  });
+}
+
+function renderCustomModelOptions(){
+  const select = document.getElementById("customModel");
+  if(!select) return;
+  select.innerHTML = platformNames().map(name=>`<option value="${name}">${name}</option>`).join("");
+}
+
+document.getElementById("addPlatformBtn").addEventListener("click",()=>{
+  const index = state.platforms.filter(p=>p.name.startsWith("自定义平台")).length + 1;
+  state.platforms.push({ id:`custom_${Date.now()}`, name:`自定义平台 ${index}`, key:"", status:"未测试" });
+  saveState();
+  renderApiList();
+  renderRoleConfig();
+  renderMatrix();
+  showToast("已添加自定义平台");
+});
+
+const modal = document.getElementById("roleModal");
+function openModal(){ modal.classList.add("show"); modal.setAttribute("aria-hidden","false"); document.getElementById("customName").focus(); }
+function closeModal(){ modal.classList.remove("show"); modal.setAttribute("aria-hidden","true"); }
+document.getElementById("newRoleBtn").addEventListener("click",openModal);
+document.getElementById("closeModalBtn").addEventListener("click",closeModal);
+document.getElementById("cancelRoleBtn").addEventListener("click",closeModal);
+modal.addEventListener("click",e=>{ if(e.target === modal) closeModal(); });
+document.addEventListener("keydown",e=>{ if(e.key === "Escape") closeModal(); });
+document.getElementById("saveRoleBtn").addEventListener("click",()=>{
+  const name = document.getElementById("customName").value.trim();
+  const duty = document.getElementById("customDuty").value.trim();
+  const domain = document.getElementById("customDomain").value.trim();
+  const model = document.getElementById("customModel").value;
+  if(!name || !duty){ showToast("请填写名称和职责"); return; }
+  state.roles.push({
+    id:`role_${Date.now()}`,
+    name,
+    initials:name.slice(0,2).toUpperCase(),
+    duty,
+    domain,
+    model,
+    prompt:`你是${name}。职责：${duty}。擅长领域：${domain || "未填写"}。请输出简洁、可执行、带风险意识的建议。`
+  });
+  ["customName","customDuty","customDomain"].forEach(id=>document.getElementById(id).value = "");
+  saveState();
+  renderRolePanels();
+  renderRoleConfig();
+  renderMatrix();
+  closeModal();
+  showToast("自定义角色已保存");
+});
+
+function init(){
+  updateMetrics();
+  renderRolePanels();
+  renderRoleConfig();
+  renderApiList();
+  renderMatrix();
+}
+init();
+</script>
+</body>
+</html>
