@@ -1,0 +1,17 @@
+[Unit]
+Description=多AI协同决策工作台 · FastAPI Backend
+After=network.target mysql.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/var/www/workbench/backend
+EnvironmentFile=/var/www/workbench/backend/.env
+ExecStart=/var/www/workbench/backend/venv/bin/uvicorn main:app --host 127.0.0.1 --port 8002 --log-level info
+Restart=always
+RestartSec=3
+StandardOutput=append:/var/www/workbench/backend/logs/app.log
+StandardError=append:/var/www/workbench/backend/logs/app.log
+
+[Install]
+WantedBy=multi-user.target
