@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Prototype E · 品牌金蓝拓扑改版</title>
+<title>源流决策台 · 多AI协同工作台</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
@@ -119,7 +119,7 @@ body::before{
 .main{
   min-height:0;
   display:grid;
-  grid-template-columns:286px minmax(0,1fr) 310px;
+  grid-template-columns:310px minmax(0,1fr) 310px;
   gap:18px;
 }
 .panel{
@@ -149,66 +149,115 @@ body::before{
   font-weight:850;
   letter-spacing:1.3px;
 }
-.console{
+.panel-body{
   position:relative;
   z-index:1;
-  padding:17px;
+  padding:14px 17px;
+  overflow-y:auto;
 }
-.console textarea{
+.panel-body::-webkit-scrollbar{width:4px}
+.panel-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:4px}
+
+/* ── 输入区 ── */
+.input-group{margin-bottom:12px}
+.input-group label{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin-bottom:4px;
+  letter-spacing:.5px;
+}
+.input-group input, .input-group textarea{
   width:100%;
-  height:118px;
-  resize:none;
-  outline:none;
-  color:var(--text);
-  border:1px solid rgba(255,255,255,.15);
-  border-radius:20px;
+  padding:9px 11px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:12px;
   background:rgba(6,14,28,.40);
-  padding:15px;
-  line-height:1.65;
-  box-shadow:inset 0 1px 18px rgba(0,0,0,.12);
+  color:var(--text);
+  font-size:13px;
+  outline:none;
+  transition:border-color .2s;
+  font-family:inherit;
 }
-.console textarea:focus{
+.input-group input:focus, .input-group textarea:focus{
   border-color:rgba(232,200,111,.55);
-  box-shadow:0 0 0 5px rgba(232,200,111,.09);
+  box-shadow:0 0 0 4px rgba(232,200,111,.08);
 }
+.input-group textarea{resize:none;height:71px}
 .btn{
   width:100%;
-  margin-top:13px;
-  padding:14px 18px;
+  margin-top:10px;
+  padding:13px 18px;
   border:0;
   border-radius:999px;
   color:#17100a;
   background:linear-gradient(135deg,var(--gold-light),var(--gold) 52%,#ffd66f);
   box-shadow:0 16px 36px rgba(232,200,111,.23),0 12px 34px rgba(61,134,216,.12);
   font-weight:900;
+  font-size:14px;
   letter-spacing:1px;
   cursor:pointer;
   transition:transform .22s cubic-bezier(.2,.9,.2,1),box-shadow .22s;
 }
 .btn:hover{
-  transform:translateY(-2px) scale(1.015);
+  transform:translateY(-2px) scale(1.01);
   box-shadow:0 22px 44px rgba(232,200,111,.30),0 16px 38px rgba(61,134,216,.16);
 }
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* ── API Key 区 ── */
+.apikey-section{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.06)}
+.apikey-section summary{
+  color:var(--muted);
+  font-size:11px;
+  cursor:pointer;
+  letter-spacing:1px;
+  margin-bottom:8px;
+}
+.apikey-input{
+  width:100%;
+  padding:6px 9px;
+  margin-bottom:5px;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:8px;
+  background:rgba(6,14,28,.35);
+  color:var(--text);
+  font-size:11px;
+  outline:none;
+  font-family:monospace;
+}
+.apikey-input:focus{border-color:rgba(61,134,216,.45)}
+.apikey-label{font-size:10px;color:var(--muted);margin-bottom:3px;display:block}
+
+/* ── 勾选列表 ── */
+.checklist{max-height:200px;overflow-y:auto}
+.checklist label{
+  display:flex;
+  align-items:center;
+  padding:5px 0;
+  cursor:pointer;
+  font-size:11px;
+  gap:6px;
+  transition:color .2s;
+}
+.checklist label:hover{color:#fff}
+.checklist input[type=checkbox]{accent-color:var(--gold)}
+
+/* ── 指标 ── */
 .metric{
   position:relative;
   z-index:1;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin:12px 17px;
-  padding:13px 0;
+  margin:10px 17px;
+  padding:11px 0;
   border-bottom:1px solid rgba(255,255,255,.08);
 }
-.metric span{
-  color:var(--muted);
-  font-size:12px;
-}
-.metric b{
-  color:#fff;
-  font-size:25px;
-  font-weight:850;
-  letter-spacing:-.5px;
-}
+.metric span{color:var(--muted);font-size:12px}
+.metric b{color:#fff;font-size:23px;font-weight:850;letter-spacing:-.5px}
+
+/* ── 拓扑区 ── */
 .topology{
   position:relative;
   min-height:570px;
@@ -230,9 +279,9 @@ body::before{
 .node{
   position:absolute;
   z-index:2;
-  width:156px;
-  min-height:80px;
-  padding:14px 13px;
+  width:140px;
+  min-height:68px;
+  padding:12px 11px;
   text-align:center;
   border:1px solid rgba(255,255,255,.18);
   border-radius:22px;
@@ -242,51 +291,34 @@ body::before{
   transition:transform .28s cubic-bezier(.2,1.4,.35,1),border-color .28s,box-shadow .28s,opacity .28s;
 }
 .node:hover{
-  transform:translateY(-7px) scale(1.035);
+  transform:translateY(-6px) scale(1.03);
   border-color:rgba(253,250,197,.56);
   box-shadow:0 24px 62px rgba(0,0,0,.26),0 0 34px rgba(232,200,111,.18);
 }
-.node b{
-  display:block;
-  font-size:15px;
-  font-weight:900;
-  letter-spacing:.4px;
-}
-.node span{
-  display:block;
-  margin-top:6px;
-  color:var(--muted);
-  font-size:12px;
-}
+.node b{display:block;font-size:13px;font-weight:900;letter-spacing:.3px}
+.node span{display:block;margin-top:5px;color:var(--muted);font-size:10px}
 .node.president{
-  left:50%;
-  top:20px;
-  transform:translateX(-50%);
+  left:50%;top:20px;transform:translateX(-50%);
   border-color:rgba(253,250,197,.58);
   box-shadow:0 20px 62px rgba(0,0,0,.26),0 0 38px rgba(232,200,111,.22);
 }
-.node.president:hover{transform:translateX(-50%) translateY(-7px) scale(1.035)}
+.node.president:hover{transform:translateX(-50%) translateY(-6px) scale(1.03)}
 .node.ceo{
-  left:50%;
-  top:136px;
-  transform:translateX(-50%);
+  left:50%;top:130px;transform:translateX(-50%);
   border-color:rgba(232,200,111,.48);
   box-shadow:0 20px 58px rgba(0,0,0,.24),0 0 28px rgba(232,200,111,.13);
 }
-.node.ceo:hover{transform:translateX(-50%) translateY(-7px) scale(1.035)}
-.node.dept{
-  width:142px;
-  border-color:rgba(61,134,216,.40);
-}
-.n0{left:7%;top:285px}
-.n1{left:19%;top:405px}
-.n2{left:31%;top:285px}
-.n3{left:43%;top:405px}
-.n4{left:55%;top:285px}
-.n5{left:67%;top:405px}
-.n6{left:79%;top:285px}
-.n7{left:14%;top:535px}
-.n8{left:74%;top:535px}
+.node.ceo:hover{transform:translateX(-50%) translateY(-6px) scale(1.03)}
+.node.dept{width:128px;border-color:rgba(61,134,216,.40)}
+.n0{left:7%;top:270px}
+.n1{left:20%;top:380px}
+.n2{left:33%;top:270px}
+.n3{left:46%;top:380px}
+.n4{left:59%;top:270px}
+.n5{left:72%;top:380px}
+.n6{left:80%;top:270px}
+.n7{left:15%;top:510px}
+.n8{left:73%;top:510px}
 .node.idle{opacity:.78}
 .node.running{
   animation:runningPulse 1.12s ease-in-out infinite alternate;
@@ -339,27 +371,32 @@ body::before{
   background:linear-gradient(90deg,#d8ebff,var(--blue-soft));
   box-shadow:0 0 18px rgba(61,134,216,.82),0 0 16px rgba(117,183,255,.58);
 }
-.l1{left:50%;top:104px;width:112px;transform:rotate(90deg)}
-.l2{left:50%;top:220px;width:280px;transform:rotate(118deg)}
-.l3{left:50%;top:220px;width:270px;transform:rotate(62deg)}
-.l4{left:50%;top:220px;width:250px;transform:rotate(90deg)}
-.l5{left:18%;top:370px;width:660px}
+.l1{left:50%;top:100px;width:100px;transform:rotate(90deg)}
+.l2{left:50%;top:214px;width:270px;transform:rotate(118deg)}
+.l3{left:50%;top:214px;width:260px;transform:rotate(62deg)}
+.l4{left:50%;top:214px;width:240px;transform:rotate(90deg)}
+.l5{left:18%;top:350px;width:620px}
+
+/* ── 日志与汇总 ── */
 .feed{
   position:relative;
   z-index:1;
   height:calc(100% - 50px);
-  padding:14px 17px;
-  overflow:hidden;
+  padding:12px 16px;
+  overflow-y:auto;
+  font-size:12px;
   color:#d7e4fb;
-  font-size:12.5px;
 }
 .feed p{
-  margin:0 0 11px;
-  padding:9px 10px;
-  border:1px solid rgba(255,255,255,.09);
-  border-radius:14px;
-  background:rgba(255,255,255,.045);
+  margin:0 0 9px;
+  padding:8px 10px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+  background:rgba(255,255,255,.04);
+  line-height:1.5;
 }
+.feed::-webkit-scrollbar{width:4px}
+.feed::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:4px}
 .bottom{
   display:grid;
   grid-template-columns:1fr 1.2fr 1fr;
@@ -368,21 +405,20 @@ body::before{
 .summary{
   position:relative;
   z-index:1;
-  padding:15px 18px;
+  padding:14px 17px;
   color:var(--muted);
-  font-size:14px;
-  line-height:1.65;
+  font-size:13px;
+  line-height:1.6;
+  max-height:100px;
+  overflow-y:auto;
 }
-.summary.show{
-  color:#fff;
-  animation:summaryRise .42s ease both;
-}
+.summary.show{color:#fff;animation:summaryRise .42s ease both}
 .bar{
-  height:9px;
-  margin:12px 0 10px;
+  height:8px;
+  margin:10px 0 8px;
   overflow:hidden;
   border-radius:999px;
-  background:rgba(255,255,255,.075);
+  background:rgba(255,255,255,.07);
 }
 .bar i{
   display:block;
@@ -390,9 +426,14 @@ body::before{
   height:100%;
   border-radius:inherit;
   background:linear-gradient(90deg,var(--blue),var(--gold),var(--gold-light));
-  box-shadow:0 0 18px rgba(232,200,111,.35);
+  box-shadow:0 0 16px rgba(232,200,111,.32);
   transition:width .5s cubic-bezier(.2,.8,.2,1);
 }
+
+/* ── 历史列表 ── */
+.hist-item:hover{background:rgba(255,255,255,.04)}
+
+/* ── 动画 ── */
 @keyframes runningPulse{
   from{box-shadow:0 18px 48px rgba(0,0,0,.22),0 0 0 rgba(61,134,216,0),inset 0 0 0 rgba(232,200,111,0)}
   to{box-shadow:0 24px 64px rgba(0,0,0,.24),0 0 34px rgba(61,134,216,.34),0 0 28px rgba(232,200,111,.16),inset 0 0 26px rgba(117,183,255,.12)}
@@ -411,46 +452,101 @@ body::before{
 <body>
 <div class="screen">
   <div class="hud">
+
+    <!-- ═══ 顶部导航 ═══ -->
     <header class="top">
-      <div class="brand">SOURCEFLOW OS<small>BRAND TOPOLOGY</small></div>
-      <div class="title"><h1>源流决策台</h1><span>品牌金蓝拓扑改版</span></div>
+      <div class="brand">SOURCEFLOW OS<small>MULTI-AI WORKBENCH</small></div>
+      <div class="title"><h1>源流决策台</h1><span>多AI协同决策工作台</span></div>
       <div class="clock" id="clock"></div>
     </header>
 
+    <!-- ═══ 主体三栏 ═══ -->
     <main class="main">
-      <aside class="panel">
+
+      <!-- 左栏：控制台 -->
+      <aside class="panel" style="display:flex;flex-direction:column">
         <h2>任务控制台</h2>
-        <div class="console">
-          <textarea id="q">评估多AI协同决策工作台的最小验证路径。</textarea>
-          <button class="btn" id="start">开始分析</button>
+        <div class="panel-body" style="flex:1;display:flex;flex-direction:column">
+
+          <!-- API Key 配置 -->
+          <details class="apikey-section" open>
+            <summary>🔑 API Key 配置（浏览器本地存储）</summary>
+            <span class="apikey-label">Claude API Key</span>
+            <input class="apikey-input" id="apikey-claude" data-model="claude" placeholder="sk-ant-..." autocomplete="off">
+            <span class="apikey-label">DeepSeek API Key</span>
+            <input class="apikey-input" id="apikey-deepseek" data-model="deepseek" placeholder="sk-..." autocomplete="off">
+            <span class="apikey-label">GPT API Key</span>
+            <input class="apikey-input" id="apikey-gpt" data-model="gpt" placeholder="sk-..." autocomplete="off">
+          </details>
+
+          <!-- 任务输入 -->
+          <div class="input-group">
+            <label>任务标题</label>
+            <input type="text" id="task-input-title" placeholder="例：评估多AI协同工作台最小验证路径" value="评估多AI协同决策工作台的最小验证路径">
+          </div>
+          <div class="input-group">
+            <label>任务详细描述</label>
+            <textarea id="task-input-desc" placeholder="描述你希望 AI 团队分析的问题...">请从技术可行性、用户价值、市场机会三个维度，评估多AI协同决策工作台的最小验证路径。重点关注：API Key门槛对用户转化率的影响、多AI并行比单AI串行的效率提升幅度、以及商业化定价策略。</textarea>
+          </div>
+
+          <!-- 角色选择 -->
+          <div class="input-group">
+            <label>🎭 执行角色</label>
+            <div class="checklist" id="role-checklist"></div>
+          </div>
+
+          <!-- 模型选择 -->
+          <div class="input-group">
+            <label>🤖 AI 模型</label>
+            <div class="checklist" id="model-checklist"></div>
+          </div>
+
+          <button class="btn" id="start">▶ 开始分析</button>
+
+          <div style="margin-top:14px">
+            <div class="metric"><span>可用角色</span><b id="count-roles">-</b></div>
+            <div class="metric"><span>可选模型</span><b id="count-models">-</b></div>
+            <div class="metric"><span>当前阶段</span><b id="stage">待命</b></div>
+          </div>
         </div>
-        <div class="metric"><span>组织节点</span><b>11</b></div>
-        <div class="metric"><span>并行部门</span><b>9</b></div>
-        <div class="metric"><span>当前阶段</span><b id="stage">待命</b></div>
       </aside>
 
-      <section class="panel topology" id="topology">
-        <div class="line gold-line l1"></div>
-        <div class="line gold-line l2"></div>
-        <div class="line blue-particle l3"></div>
-        <div class="line gold-line l4"></div>
-        <div class="line blue-particle l5"></div>
+      <!-- 中栏：拓扑图 + 历史 -->
+      <section>
+        <div class="panel topology" id="topology" style="height:60%">
+          <div class="line gold-line l1"></div>
+          <div class="line gold-line l2"></div>
+          <div class="line blue-particle l3"></div>
+          <div class="line gold-line l4"></div>
+          <div class="line blue-particle l5"></div>
+        </div>
+        <div class="panel" style="height:calc(40% - 18px);margin-top:18px">
+          <h2>📋 历史任务</h2>
+          <div class="panel-body" id="history-list" style="max-height:calc(100% - 50px);overflow-y:auto">
+            <div class="hist-item"><span>加载中...</span></div>
+          </div>
+        </div>
       </section>
 
+      <!-- 右栏：协同日志 -->
       <aside class="panel">
         <h2>协同日志</h2>
-        <div class="feed" id="feed"><p>[00:00:00] 系统待命，等待总裁下达任务。</p></div>
+        <div class="feed" id="feed"><p>[系统] 正在初始化...</p></div>
       </aside>
     </main>
 
+    <!-- ═══ 底部三栏 ═══ -->
     <footer class="bottom">
       <section class="panel">
         <h2>拆解进度</h2>
-        <div class="summary">需求识别<div class="bar"><i id="p1"></i></div>角色分发<div class="bar"><i id="p2"></i></div></div>
+        <div class="summary">
+          需求识别<div class="bar"><i id="p1"></i></div>
+          角色执行<div class="bar"><i id="p2"></i></div>
+        </div>
       </section>
       <section class="panel">
-        <h2>执行总裁汇总</h2>
-        <div class="summary" id="summary">分析完成后生成跨部门简报。</div>
+        <h2>执行经理汇总</h2>
+        <div class="summary" id="summary">等待下达任务。</div>
       </section>
       <section class="panel">
         <h2>异常与提醒</h2>
@@ -460,75 +556,6 @@ body::before{
   </div>
 </div>
 
-<script>
-const roles=["总裁","执行总裁","战略部","市场部","产品部","技术部","财务部","风险部","运营部","法务部","自定义部"];
-const pos=["president","ceo","dept n0","dept n1","dept n2","dept n3","dept n4","dept n5","dept n6","dept n7","dept n8"];
-const topo=document.getElementById("topology");
-
-roles.forEach((role,index)=>{
-  const node=document.createElement("div");
-  node.className="node idle "+pos[index];
-  node.dataset.index=index;
-  node.innerHTML=`<b>${role}</b><span>${index<2?"指挥层":"并行分析节点"}</span>`;
-  topo.appendChild(node);
-});
-
-function log(text){
-  feed.innerHTML=`<p>[${new Date().toLocaleTimeString()}] ${text}</p>`+feed.innerHTML;
-}
-
-function setNodes(status){
-  document.querySelectorAll(".node").forEach(node=>{
-    node.classList.remove("idle","running","done","error");
-    node.classList.add(status);
-  });
-}
-
-function setNode(index,status){
-  const node=document.querySelector(`[data-index="${index}"]`);
-  node.className="node "+status+" "+pos[index];
-}
-
-start.onclick=()=>{
-  setNodes("idle");
-  summary.textContent="执行中：等待各部门回传。";
-  summary.classList.remove("show");
-  alerts.textContent="暂无异常。";
-  stage.textContent="拆解";
-  p1.style.width="0";
-  p2.style.width="0";
-  log("总裁任务已接收，执行总裁开始拆解。");
-  setNode(1,"running");
-
-  setTimeout(()=>{
-    p1.style.width="100%";
-    stage.textContent="分发";
-    log("任务拆解完成，9 个部门进入并行执行。");
-    setNode(1,"done");
-
-    for(let index=2;index<11;index++){
-      setTimeout(()=>{
-        setNode(index,"running");
-        log(roles[index]+" 正在回传分析数据。");
-        setTimeout(()=>{
-          setNode(index,"done");
-          log(roles[index]+" 已完成。");
-          if(index===10){
-            p2.style.width="100%";
-            stage.textContent="汇总";
-            summary.textContent="汇总结论：建议以自用验证优先，重点监控 API Key 门槛、连续使用频率、单次决策耗时和最终输出质量。";
-            summary.classList.add("show");
-            alerts.textContent="提醒：若 30 天内无法形成高频使用，应停止商业化投入。";
-            stage.textContent="完成";
-          }
-        },760);
-      },(index-2)*260);
-    }
-  },1300);
-};
-
-setInterval(()=>{clock.textContent=new Date().toLocaleString();},1000);
-clock.textContent=new Date().toLocaleString();
-</script>
+<script src="app.js"></script>
 </body>
 </html>
