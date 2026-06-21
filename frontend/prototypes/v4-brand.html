@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>源流决策台 · 多AI协同决策工作台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
+<style>
+/* ══════ 品牌设计令牌（继承源流数字官网） ══════ */
+:root{
+  --navy-0:#040a16;
+  --navy-1:#060e1c;
+  --navy-2:#0a1526;
+  --navy-3:#0f1d33;
+  --blue:#1E5FA8;
+  --blue-bright:#3d86d8;
+  --blue-deep:#0d3a6b;
+  --gold:#C9A84C;
+  --gold-bright:#E8D29A;
+  --gold-dim:#8d6e28;
+  --ink:#eaf0fa;
+  --muted:#93a4bd;
+  --muted-dim:#5e7088;
+  --line:rgba(146,170,205,.14);
+  --line-strong:rgba(146,170,205,.22);
+  --grad-gold:linear-gradient(135deg,#F0E2B4 0%,#C9A84C 45%,#8d6e28 100%);
+  --grad-steel:linear-gradient(135deg,#d6e6fb 0%,#3d86d8 40%,#0d3a6b 100%);
+  --radius:10px;
+  --radius-lg:16px;
+  --radius-xl:24px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Noto Sans SC","Space Grotesk",system-ui,sans-serif;
+  background:var(--navy-1);
+  color:var(--ink);
+  height:100vh;overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+.en{font-family:"Space Grotesk",sans-serif}
+.gold-text{background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;color:transparent}
+.steel-text{background:var(--grad-steel);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ══════ LAYOUT ══════ */
+.app{display:flex;flex-direction:column;height:100vh;}
+
+/* ── TOP BAR ── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  height:60px;min-height:60px;
+  padding:0 28px;
+  background:rgba(6,14,28,.85);
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  border-bottom:1px solid var(--line);
+  position:relative;z-index:10;
+}
+.brand{display:flex;align-items:baseline;gap:10px;}
+.brand h1{
+  font-size:17px;font-weight:700;letter-spacing:2px;
+  background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.brand .sub{
+  font-size:11px;color:var(--muted-dim);letter-spacing:2px;
+  font-family:"Space Grotesk";font-weight:500;
+}
+.brand .sep{color:var(--gold);font-size:15px;font-weight:300;}
+.topbar-right{display:flex;align-items:center;gap:6px;}
+.tb-btn{
+  width:34px;height:34px;border-radius:8px;border:1px solid transparent;
+  background:transparent;color:var(--muted);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;transition:all .2s;position:relative;
+}
+.tb-btn:hover{background:rgba(146,170,205,.08);color:var(--ink);border-color:var(--line);}
+.tb-btn .dot{
+  position:absolute;top:5px;right:5px;width:6px;height:6px;
+  border-radius:50%;background:var(--gold);
+}
+.avatar{
+  width:30px;height:30px;border-radius:50%;
+  background:var(--grad-steel);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;margin-left:6px;
+}
+
+/* ── MAIN GRID ── */
+.main{display:flex;flex:1;min-height:0;}
+.left{
+  width:372px;min-width:372px;
+  display:flex;flex-direction:column;gap:0;
+  border-right:1px solid var(--line);
+  overflow-y:auto;
+  background:
+    linear-gradient(180deg,rgba(10,21,38,.5),var(--navy-1));
+}
+.left::-webkit-scrollbar{width:3px;}
+.left::-webkit-scrollbar-thumb{background:var(--line);border-radius:2px;}
+
+/* ── SECTION ══ */
+.section{padding:20px 22px;border-bottom:1px solid var(--line);}
+.section-header{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+.section-header .sicon{font-size:15px;}
+.section-header .stitle{font-size:13px;font-weight:600;color:var(--ink);letter-spacing:.5px;}
+.section-header .shint{font-size:10px;color:var(--muted-dim);margin-left:auto;font-family:"Space Grotesk";text-transform:uppercase;letter-spacing:1px;}
+
+/* Form */
+.field{margin-bottom:13px;}
+.field:last-child{margin-bottom:0;}
+.field label{
+  display:block;font-size:11px;font-weight:500;color:var(--muted-dim);
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;
+  font-family:"Space Grotesk";
+}
+.field input,.field textarea{
+  width:100%;padding:9px 13px;
+  background:var(--navy-0);border:1px solid var(--line);
+  border-radius:var(--radius);color:var(--ink);
+  font-family:"Noto Sans SC","Space Grotesk",sans-serif;font-size:13px;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.field input:focus,.field textarea:focus{
+  border-color:var(--blue-bright);
+  box-shadow:0 0 0 3px rgba(30,95,168,.18);
+}
+.field textarea{resize:none;min-height:66px;line-height:1.6;}
+.field input::placeholder,.field textarea::placeholder{color:var(--muted-dim);}
+
+/* Chips */
+.chips{display:flex;flex-wrap:wrap;gap:7px;}
+.chip{position:relative;}
+.chip input{position:absolute;opacity:0;pointer-events:none;}
+.chip label{
+  display:flex;align-items:center;gap:5px;
+  padding:7px 14px;border-radius:20px;
+  background:var(--navy-0);border:1px solid var(--line);
+  color:var(--muted);font-size:12.5px;font-weight:400;
+  cursor:pointer;transition:all .2s;user-select:none;
+}
+.chip label:hover{border-color:var(--line-strong);color:var(--ink);}
+.chip input:checked+label{
+  background:rgba(30,95,168,.15);border-color:var(--blue-bright);
+  color:#a5c8f0;
+}
+.chip.gold input:checked+label{
+  background:rgba(201,168,76,.09);border-color:var(--gold);
+  color:var(--gold-bright);
+}
+
+/* Execute button */
+.btn-exec{
+  width:100%;padding:12px;margin-top:16px;
+  border:none;border-radius:28px;
+  background:var(--grad-steel);color:#fff;
+  font-family:"Noto Sans SC","Space Grotesk",sans-serif;
+  font-size:14px;font-weight:600;cursor:pointer;letter-spacing:1px;
+  box-shadow:0 6px 24px rgba(30,95,168,.3);
+  transition:transform .2s,box-shadow .2s;
+}
+.btn-exec:hover{transform:translateY(-1px);box-shadow:0 10px 32px rgba(30,95,168,.45);}
+.btn-exec:active{transform:scale(.98);}
+
+/* Router */
+.router-status{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.pulse{
+  width:9px;height:9px;border-radius:50%;
+  background:var(--blue-bright);
+  animation:pulse 2.2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(61,134,216,.4);}50%{opacity:.5;box-shadow:0 0 0 8px rgba(61,134,216,0);}}
+.router-text{font-size:12px;color:var(--muted);}
+.router-path{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;margin-top:8px;}
+.router-path .rn{color:#a5c8f0;font-weight:500;}
+.router-path .arrow{color:var(--muted-dim);font-size:10px;}
+.route-hint{font-size:12px;color:var(--muted-dim);line-height:1.65;margin-top:6px;}
+.route-hint em{color:var(--gold-bright);font-style:normal;}
+
+/* Collapse */
+.collapse-head{
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;user-select:none;
+  font-size:13px;font-weight:600;color:var(--muted);
+}
+.collapse-head .chev{font-size:10px;color:var(--muted-dim);transition:transform .25s;}
+.collapse-head.open .chev{transform:rotate(180deg);}
+.collapse-body{display:none;margin-top:14px;}
+.collapse-body.open{display:block;}
+.btn-save{
+  width:100%;padding:9px;margin-top:8px;
+  border:1px solid var(--line);border-radius:20px;
+  background:rgba(30,95,168,.08);color:var(--blue-bright);
+  font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;
+  transition:all .2s;
+}
+.btn-save:hover{background:rgba(30,95,168,.16);border-color:var(--blue-bright);}
+
+/* ══ RIGHT CANVAS ══ */
+.canvas{
+  flex:1;position:relative;overflow:hidden;
+  background:
+    radial-gradient(100% 70% at 78% 18%,rgba(30,95,168,.16),transparent 55%),
+    radial-gradient(80% 60% at 12% 88%,rgba(201,168,76,.07),transparent 55%),
+    var(--navy-1);
+}
+.canvas-logo{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;
+  opacity:.30;
+}
+.canvas-logo img{width:min(540px,56vw);height:auto;animation:logoFloat 12s ease-in-out infinite;filter:drop-shadow(0 0 100px rgba(61,134,216,.8)) drop-shadow(0 0 40px rgba(201,168,76,.5));}
+@keyframes logoFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-14px) scale(1.04)}}
+.canvas-grid{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:56px 56px;
+  -webkit-mask-image:radial-gradient(100% 80% at 50% 40%,#000 35%,transparent 78%);
+  mask-image:radial-gradient(100% 80% at 50% 40%,#000 35%,transparent 78%);
+}
+.canvas-label{
+  position:absolute;top:16px;left:22px;
+  font-family:"Space Grotesk";font-size:10px;color:var(--muted-dim);
+  letter-spacing:3px;text-transform:uppercase;
+}
+.canvas-label::before{content:"";display:inline-block;width:18px;height:1px;background:var(--grad-gold);vertical-align:middle;margin-right:8px;}
+
+/* Nodes — 响应式尺寸 */
+.nodes{position:absolute;inset:0;z-index:3;}
+.cn{
+  position:absolute;display:flex;align-items:center;
+  gap:clamp(6px,1vw,12px);
+  padding:clamp(10px,1.4vw,16px) clamp(18px,2.5vw,30px);
+  border-radius:clamp(20px,2.6vw,30px);
+  background:linear-gradient(165deg,rgba(255,255,255,.035),rgba(255,255,255,.012));
+  border:1px solid var(--line);
+  font-size:clamp(12px,1.3vw,15px);font-weight:500;white-space:nowrap;
+  transition:border-color .3s,box-shadow .3s,transform .3s;
+  user-select:none;cursor:pointer;
+}
+.cn:hover{border-color:rgba(201,168,76,.3);box-shadow:0 8px 30px rgba(3,9,20,.45);transform:translateY(-2px);}
+.cn .ni{font-size:clamp(17px,1.8vw,22px);line-height:1;}
+.cn .nn{color:var(--ink);}
+.cn .badge{font-size:clamp(10px,1vw,12px);font-weight:600;padding:clamp(3px,0.4vw,5px) clamp(8px,1vw,12px);border-radius:10px;margin-left:2px;}
+
+/* President */
+.cn-prez{
+  left:50%;top:6%;transform:translateX(-50%);
+  border-color:rgba(201,168,76,.25);
+  background:linear-gradient(165deg,rgba(201,168,76,.08),rgba(201,168,76,.02));
+  padding:clamp(14px,1.8vw,20px) clamp(26px,3.2vw,36px);
+  border-radius:clamp(26px,3vw,34px);
+}
+.cn-prez .ni{font-size:clamp(22px,2.4vw,28px);}
+.cn-prez .nn{font-size:clamp(14px,1.5vw,17px);font-weight:700;}
+.cn-prez .tl{
+  font-size:clamp(10px,1vw,12px);color:var(--muted-dim);margin-left:4px;
+  max-width:clamp(180px,22vw,260px);overflow:hidden;text-overflow:ellipsis;
+}
+
+/* Router */
+.cn-route{
+  left:50%;top:26%;transform:translateX(-50%);
+  border-color:rgba(61,134,216,.28);
+  padding:clamp(12px,1.6vw,18px) clamp(22px,3vw,34px);
+  border-radius:clamp(22px,2.8vw,30px);
+}
+.cn-route .ni{font-size:clamp(19px,2.1vw,24px);}
+.cn-route .nn{font-size:clamp(13px,1.4vw,16px);font-weight:600;}
+.cn-route .badge{background:rgba(61,134,216,.15);color:#a5c8f0;}
+
+/* Role row — flex 横向排列 */
+.role-row{
+  position:absolute;top:54%;left:0;right:0;
+  display:flex;justify-content:center;align-items:center;
+  gap:clamp(8px,1.2vw,14px);flex-wrap:wrap;padding:0 10px;
+}
+.role-row .cn{
+  position:relative!important;left:auto!important;top:auto!important;
+  transform:none!important;flex-shrink:0;
+  padding:clamp(8px,1vw,12px) clamp(14px,1.8vw,20px)!important;
+  font-size:clamp(11px,1.1vw,13px)!important;
+}
+.role-row .cn .ni{font-size:clamp(15px,1.5vw,18px)!important;}
+.role-row .cn .badge{font-size:clamp(9px,.85vw,10px)!important;}
+.cn-role.done{border-color:rgba(14,181,117,.25);}
+.cn-role.done .badge{background:rgba(14,181,117,.10);color:#0eb575;}
+.cn-role.running{border-color:rgba(61,134,216,.35);animation:glowPulse 2.8s ease-in-out infinite;}
+.cn-role.running .badge{background:rgba(61,134,216,.15);color:#a5c8f0;}
+.cn-role.idle .badge{background:transparent;color:var(--muted-dim);border:1px solid var(--line);}
+@keyframes glowPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(61,134,216,.08);}
+  50%{box-shadow:0 0 22px rgba(61,134,216,.16);}
+}
+
+/* Connection lines — 百分比坐标系自适应 */
+.conn-svg{position:absolute;inset:0;pointer-events:none;z-index:2;}
+.conn-svg line{stroke:rgba(146,170,205,.18);stroke-width:1.5;}
+
+/* Canvas controls */
+.zoom-ctrls{
+  position:absolute;bottom:16px;right:16px;z-index:5;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.zoom-ctrls button{
+  width:30px;height:30px;border-radius:8px;
+  background:rgba(6,14,28,.7);border:1px solid var(--line);
+  color:var(--muted);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(8px);transition:all .15s;line-height:1;
+}
+.zoom-ctrls button:hover{background:rgba(15,29,51,.8);color:var(--ink);border-color:var(--line-strong);}
+.zoom-ctrls .pct{font-family:"Space Grotesk";font-size:10px;color:var(--muted-dim);font-weight:600;}
+
+/* Empty */
+.empty-state{
+  position:absolute;inset:0;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;
+  opacity:.3;pointer-events:none;
+}
+.empty-state .ebig{font-size:48px;margin-bottom:12px;}
+.empty-state .et{font-size:14px;color:var(--muted);font-weight:500;}
+.empty-state .es{font-size:11px;color:var(--muted-dim);margin-top:4px;}
+
+/* ══ RESULT PANEL ══ */
+.result-overlay{
+  position:fixed;inset:0;z-index:50;pointer-events:none;
+  display:flex;justify-content:flex-end;
+}
+.result-overlay.on{pointer-events:auto;}
+.result-overlay .backdrop{
+  position:absolute;inset:0;background:rgba(4,10,22,.55);
+  opacity:0;transition:opacity .35s;
+}
+.result-overlay.on .backdrop{opacity:1;}
+.result-panel{
+  position:relative;z-index:1;
+  width:440px;height:100vh;
+  background:linear-gradient(180deg,var(--navy-2),var(--navy-1));
+  border-left:1px solid var(--line);
+  display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;
+}
+.result-overlay.on .result-panel{transform:translateX(0);}
+.result-panel::-webkit-scrollbar{width:3px;}
+.result-panel::-webkit-scrollbar-thumb{background:var(--line);border-radius:2px;}
+
+.rp-pad{padding:24px 26px;}
+.rp-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;}
+.rp-head h3{font-size:17px;font-weight:700;letter-spacing:.5px;}
+.rp-head .rp-sub{font-size:11px;color:var(--muted-dim);margin-top:2px;font-family:"Space Grotesk";}
+.rp-close{
+  width:32px;height:32px;border-radius:8px;border:1px solid var(--line);
+  background:transparent;color:var(--muted);font-size:16px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+.rp-close:hover{background:rgba(201,168,76,.08);border-color:rgba(201,168,76,.3);color:var(--gold);}
+
+.report-block{
+  padding:16px 18px;border-radius:var(--radius-lg);background:var(--navy-0);
+  margin-bottom:12px;border:1px solid var(--line);
+}
+.report-block h4{
+  font-family:"Space Grotesk";font-size:10px;font-weight:600;
+  text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;
+}
+.report-block.conclusion{border-left:3px solid var(--gold);}
+.report-block.conclusion h4{color:var(--gold-bright);}
+.report-block.evidence{border-left:3px solid var(--blue-bright);}
+.report-block.evidence h4{color:#a5c8f0;}
+.report-block.advice{border-left:3px solid #0eb575;}
+.report-block.advice h4{color:#0eb575;}
+.report-block p{font-size:13px;color:var(--muted);line-height:1.7;}
+.report-block ul{list-style:none;padding:0;}
+.report-block li{
+  font-size:13px;color:var(--muted);line-height:1.75;
+  padding-left:16px;position:relative;
+}
+.report-block li::before{
+  content:"·";position:absolute;left:4px;color:var(--blue-bright);font-weight:700;
+}
+
+.chat-section{margin-top:22px;}
+.chat-section .clabel{
+  font-family:"Space Grotesk";font-size:10px;font-weight:600;
+  color:var(--muted-dim);text-transform:uppercase;letter-spacing:2px;
+  margin-bottom:14px;
+}
+.chat-msgs{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.chat-msg{display:flex;gap:8px;max-width:86%;font-size:12.5px;line-height:1.55;}
+.chat-msg.ai{align-self:flex-start;}
+.chat-msg.user{align-self:flex-end;flex-direction:row-reverse;}
+.chat-msg .bubble{padding:9px 13px;border-radius:14px;}
+.chat-msg.ai .bubble{background:var(--navy-0);color:var(--muted);border:1px solid var(--line);}
+.chat-msg.user .bubble{background:rgba(30,95,168,.2);color:#c5d8f5;border:1px solid rgba(61,134,216,.2);}
+.chat-msg .a-sm{font-size:17px;flex-shrink:0;}
+.chat-input-row{display:flex;gap:8px;}
+.chat-input-row input{
+  flex:1;padding:9px 15px;border-radius:22px;
+  background:var(--navy-0);border:1px solid var(--line);
+  color:var(--ink);font-family:inherit;font-size:13px;outline:none;
+  transition:border-color .2s;
+}
+.chat-input-row input:focus{border-color:var(--blue-bright);}
+.chat-input-row button{
+  padding:9px 20px;border-radius:22px;border:none;
+  background:var(--grad-steel);color:#fff;
+  font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;
+  box-shadow:0 4px 16px rgba(30,95,168,.25);
+  transition:all .2s;
+}
+.chat-input-row button:hover{box-shadow:0 6px 22px rgba(30,95,168,.4);}
+
+/* ══ GUIDE OVERLAY ══ */
+.guide-overlay{
+  position:fixed;inset:0;z-index:100;
+  background:rgba(4,10,22,.78);
+  display:flex;align-items:center;justify-content:center;
+  opacity:1;transition:opacity .35s;
+}
+.guide-overlay.off{opacity:0;pointer-events:none;}
+.guide-card{
+  background:linear-gradient(165deg,var(--navy-2),var(--navy-1));
+  border:1px solid var(--line);border-radius:var(--radius-xl);
+  padding:42px 50px;max-width:500px;text-align:center;
+}
+.guide-steps{display:flex;justify-content:center;gap:7px;margin-bottom:28px;}
+.guide-steps span{
+  width:7px;height:7px;border-radius:50%;
+  background:rgba(146,170,205,.15);transition:all .3s;
+}
+.guide-steps span.on{background:var(--gold);width:22px;border-radius:4px;box-shadow:0 0 12px rgba(201,168,76,.3);}
+.guide-card h2{font-size:24px;font-weight:900;letter-spacing:1px;margin-bottom:10px;
+  background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.guide-card .gd{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:26px;}
+.guide-feats{display:flex;gap:18px;justify-content:center;margin-bottom:26px;}
+.guide-feats .gf{
+  width:96px;padding:16px 10px;border-radius:var(--radius);
+  background:rgba(255,255,255,.02);border:1px solid var(--line);
+  text-align:center;transition:border-color .3s;
+}
+.guide-feats .gf:hover{border-color:rgba(201,168,76,.25);}
+.guide-feats .gf .gf-icon{font-size:26px;margin-bottom:8px;}
+.guide-feats .gf .gf-t{font-size:11px;color:var(--muted);line-height:1.5;}
+.guide-btns{display:flex;gap:10px;justify-content:center;}
+.btn-p{
+  padding:11px 30px;border-radius:28px;border:none;
+  background:var(--grad-steel);color:#fff;
+  font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;
+  box-shadow:0 6px 22px rgba(30,95,168,.3);
+  transition:all .2s;letter-spacing:.5px;
+}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 10px 30px rgba(30,95,168,.45);}
+.btn-s{
+  padding:11px 30px;border-radius:28px;
+  background:transparent;border:1px solid var(--line);
+  color:var(--muted);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;
+  transition:all .2s;letter-spacing:.5px;
+}
+.btn-s:hover{border-color:var(--line-strong);color:var(--ink);}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);
+  background:var(--navy-2);border:1px solid var(--line);
+  color:var(--ink);padding:11px 24px;border-radius:24px;
+  font-size:13px;font-weight:500;z-index:200;
+  transition:transform .4s cubic-bezier(.4,0,.2,1);
+  pointer-events:none;
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ══ TOP BAR ══ -->
+  <header class="topbar">
+    <div class="brand">
+      <h1>源流决策台</h1>
+      <span class="sep">·</span>
+      <span class="sub">MULTI-AI WORKBENCH</span>
+    </div>
+    <div class="topbar-right">
+      <button class="tb-btn" title="API Key 配置">⚙</button>
+      <button class="tb-btn" title="任务历史"><span class="dot"></span>☰</button>
+      <button class="tb-btn" title="帮助" onclick="showGuide()">?</button>
+      <div class="avatar">S</div>
+    </div>
+  </header>
+
+  <!-- ══ MAIN ══ -->
+  <div class="main">
+    <!-- LEFT PANEL -->
+    <div class="left">
+      <!-- Task Input -->
+      <div class="section">
+        <div class="section-header">
+          <span class="sicon">▸</span>
+          <span class="stitle">总裁下达任务</span>
+          <span class="shint">Task Input</span>
+        </div>
+        <div class="field">
+          <label>任务标题</label>
+          <input type="text" placeholder="例：评估宁夏光伏项目投资风险" value="评估宁夏2026年光伏投资风险">
+        </div>
+        <div class="field">
+          <label>任务描述</label>
+          <textarea placeholder="详细描述你的需求，执行总裁会自动规划最优角色链路…">综合分析宁夏地区光伏投资的政策环境、电网消纳、土地成本、补贴退坡等风险因素</textarea>
+        </div>
+        <div class="field">
+          <label>选择模型</label>
+          <div class="chips">
+            <div class="chip"><input type="checkbox" id="m1" checked><label for="m1">Claude</label></div>
+            <div class="chip"><input type="checkbox" id="m2" checked><label for="m2">DeepSeek</label></div>
+            <div class="chip"><input type="checkbox" id="m3"><label for="m3">GPT</label></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>选择角色</label>
+          <div class="chips">
+            <div class="chip gold"><input type="checkbox" id="r1" checked><label for="r1">研究员</label></div>
+            <div class="chip gold"><input type="checkbox" id="r2" checked><label for="r2">策略师</label></div>
+            <div class="chip gold"><input type="checkbox" id="r3"><label for="r3">分析师</label></div>
+            <div class="chip gold"><input type="checkbox" id="r4"><label for="r4">规划师</label></div>
+            <div class="chip gold"><input type="checkbox" id="r5"><label for="r5">写手</label></div>
+            <div class="chip gold"><input type="checkbox" id="r6"><label for="r6">批判者</label></div>
+          </div>
+        </div>
+        <button class="btn-exec" onclick="doExec()">▶ 执行任务</button>
+      </div>
+
+      <!-- Router -->
+      <div class="section">
+        <div class="section-header">
+          <span class="sicon">◎</span>
+          <span class="stitle">执行总裁</span>
+          <span class="shint">AI Router</span>
+        </div>
+        <div class="router-status">
+          <div class="pulse"></div>
+          <span class="router-text">正在分析任务，规划最优链路…</span>
+        </div>
+        <div class="route-hint">
+          建议：<em>研究员</em> 分析政策环境 → <em>策略师</em> 评估风险矩阵 → <em>规划师</em> 输出投资建议
+        </div>
+        <div class="router-path">
+          <span style="color:var(--muted-dim);font-size:10px;font-family:'Space Grotesk';">SERIAL</span>
+          <span class="rn">研究员</span><span class="arrow">→</span>
+          <span class="rn">策略师</span><span class="arrow">→</span>
+          <span class="rn">规划师</span>
+        </div>
+      </div>
+
+      <!-- Custom Role -->
+      <div class="section">
+        <div class="collapse-head" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+          <span>+ 创建自定义角色</span>
+          <span class="chev">▾</span>
+        </div>
+        <div class="collapse-body">
+          <div class="field"><label>角色名称</label><input placeholder="例：新能源政策分析师"></div>
+          <div class="field"><label>角色描述</label><input placeholder="简述角色职责"></div>
+          <div class="field"><label>系统提示词</label><textarea placeholder="定义角色的行为方式与知识边界…" style="min-height:56px;"></textarea></div>
+          <button class="btn-save">保存角色</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ RIGHT CANVAS ══ -->
+    <div class="canvas" id="canvas">
+      <!-- ══ 品牌 Logo 背景 ══ -->
+      <div class="canvas-logo"><img src="infinity-mark.png" alt="源流数字" /></div>
+      <div class="canvas-grid"></div>
+      <div class="canvas-label">协同画布</div>
+
+      <!-- 连线：百分比坐标系，随画布自动缩放 -->
+      <svg class="conn-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="connGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#C9A84C" stop-opacity=".45"/>
+            <stop offset="100%" stop-color="#3d86d8" stop-opacity=".30"/>
+          </linearGradient>
+        </defs>
+        <!-- 总裁 → 执行总裁 -->
+        <line x1="50" y1="8" x2="50" y2="26" stroke="url(#connGrad)"/>
+        <!-- 执行总裁 → 研究员 -->
+        <path d="M50,29 C50,36 30,40 28,56" fill="none" stroke="rgba(146,170,205,.18)"/>
+        <!-- 执行总裁 → 策略师 -->
+        <path d="M50,29 C50,37 42,40 41,56" fill="none" stroke="rgba(146,170,205,.18)"/>
+        <!-- 执行总裁 → 分析师 -->
+        <path d="M50,29 C50,37 58,40 59,56" fill="none" stroke="rgba(146,170,205,.18)"/>
+        <!-- 执行总裁 → 规划师 -->
+        <path d="M50,29 C50,36 70,40 72,56" fill="none" stroke="rgba(146,170,205,.18)"/>
+      </svg>
+
+      <!-- Nodes -->
+      <div class="nodes">
+        <div class="cn cn-prez">
+          <span class="ni">👤</span>
+          <span class="nn">总裁</span>
+          <span class="tl">评估宁夏光伏投资风险</span>
+        </div>
+        <div class="cn cn-route">
+          <span class="ni">⚡</span>
+          <span class="nn">执行总裁</span>
+          <span class="badge">分析中</span>
+        </div>
+        <div class="role-row">
+          <div class="cn cn-role done" onclick="openResult('研究员')">
+            <span class="ni">🔬</span><span class="nn">研究员</span><span class="badge">已完成</span>
+          </div>
+          <div class="cn cn-role running" onclick="openResult('策略师')">
+            <span class="ni">🎯</span><span class="nn">策略师</span><span class="badge">运行中</span>
+          </div>
+          <div class="cn cn-role idle" onclick="openResult('分析师')">
+            <span class="ni">📊</span><span class="nn">数据分析师</span><span class="badge">待命</span>
+          </div>
+          <div class="cn cn-role idle" onclick="openResult('规划师')">
+            <span class="ni">📐</span><span class="nn">规划师</span><span class="badge">待命</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Canvas controls -->
+      <div class="zoom-ctrls">
+        <button>+</button><span class="pct">100%</span><button>−</button><button>↺</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RESULT PANEL ══ -->
+<div class="result-overlay" id="resultOverlay">
+  <div class="backdrop" onclick="closeResult()"></div>
+  <div class="result-panel">
+    <div class="rp-pad">
+      <div class="rp-head">
+        <div>
+          <span style="font-size:22px;vertical-align:middle;margin-right:8px;" id="resultIcon">🔬</span>
+          <h3 style="display:inline;" id="resultTitle">研究员 · 分析报告</h3>
+          <div class="rp-sub">任务：评估宁夏2026年光伏投资风险</div>
+        </div>
+        <button class="rp-close" onclick="closeResult()">✕</button>
+      </div>
+
+      <div class="report-block conclusion">
+        <h4>结论</h4>
+        <p>宁夏2026年光伏投资处于"谨慎乐观"区间。政策端支撑力强，但电网消纳瓶颈和补贴退坡构成核心风险，建议采用分阶段投资策略。</p>
+      </div>
+      <div class="report-block evidence">
+        <h4>依据</h4>
+        <ul>
+          <li>宁夏"十四五"新能源规划装机目标 50GW，当前达成率 68%，政策窗口期约 18–24 个月</li>
+          <li>2025 年宁夏弃光率 3.2%，局部地区（吴忠、中卫）达 5.8%，电网送出通道紧张</li>
+          <li>土地成本优势显著：光伏用地均价 180 元/亩/年，仅为东部省份的 1/5</li>
+          <li>绿电交易溢价约 0.02–0.05 元/kWh，市场化收益补充可部分对冲补贴退坡</li>
+        </ul>
+      </div>
+      <div class="report-block advice">
+        <h4>建议</h4>
+        <ul>
+          <li>首选吴忠、中卫以外区域，优先接入宁东-浙江/山东外送通道节点</li>
+          <li>建议一期 100MW 试探性投资，6 个月后评估消纳实况再决定二期</li>
+          <li>关注宁夏电力现货市场试点进度，绿电交易溢价空间可能扩大</li>
+        </ul>
+      </div>
+
+      <div class="chat-section">
+        <div class="clabel">追问交流</div>
+        <div class="chat-msgs">
+          <div class="chat-msg ai">
+            <span class="a-sm">🤖</span>
+            <div class="bubble">宁夏光伏投资最大的不确定性来自电网消纳。建议重点关<br>注宁东-浙江 ±800kV 特高压的剩余容量。</div>
+          </div>
+          <div class="chat-msg user">
+            <span class="a-sm">👤</span>
+            <div class="bubble">中卫地区消纳情况呢？</div>
+          </div>
+          <div class="chat-msg ai">
+            <span class="a-sm">🤖</span>
+            <div class="bubble">中卫 2025 年弃光率 5.8%，银东直流接近饱和。但宁夏-湖南 ±800kV 特高压预计 2026Q3 投运，中卫作为送端将直接受益。</div>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <input placeholder="继续追问…">
+          <button>发送</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GUIDE ══ -->
+<div class="guide-overlay" id="guideOverlay">
+  <div class="guide-card" id="guideCard">
+    <div class="guide-steps" id="guideDots"></div>
+    <div id="guideBody"></div>
+    <div class="guide-btns" id="guideBtns"></div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ GUIDE ══
+const steps=[
+  {t:"欢迎使用源流决策台",d:"多AI协同决策工作台——让多个AI角色并行协作，帮你分析复杂问题，做出更聪明的决策。",f:[["🧠","多模型并行"],["👥","角色协同"],["🎨","画布可视化"]],b:"下一步"},
+  {t:"三大核心能力",d:"选择AI模型和专家角色，执行总裁自动规划任务链路。每个角色独立分析，最后由执行总裁汇总结论。",f:[["▸","智能路由"],["◎","并行执行"],["📊","结构化报告"]],b:"下一步"},
+  {t:"开始你的第一个任务",d:"左侧输入任务、选角色和模型，点击执行——然后点击画布上的角色节点查看详细分析结果。",f:[["✎","输入任务"],["▶","点击执行"],["👆","查看结果"]],b:"开始使用"}
+];
+let gs=0;
+function renderGuide(){
+  const s=steps[gs];
+  document.getElementById('guideDots').innerHTML=steps.map((_,i)=>`<span class="${i===gs?'on':''}"></span>`).join('');
+  document.getElementById('guideBody').innerHTML=`
+    <h2>${s.t}</h2>
+    <div class="gd">${s.d}</div>
+    <div class="guide-feats">${s.f.map(f=>`<div class="gf"><div class="gf-icon">${f[0]}</div><div class="gf-t">${f[1]}</div></div>`).join('')}</div>`;
+  document.getElementById('guideBtns').innerHTML=`
+    ${gs>0?`<button class="btn-s" onclick="prevStep()">← 上一步</button>`:''}
+    <button class="btn-p" onclick="nextStep()">${s.b}</button>
+    <button class="btn-s" onclick="skipGuide()">跳过</button>`;
+}
+function nextStep(){if(gs<2){gs++;renderGuide();}else skipGuide();}
+function prevStep(){gs--;renderGuide();}
+function skipGuide(){document.getElementById('guideOverlay').classList.add('off');}
+function showGuide(){gs=0;renderGuide();document.getElementById('guideOverlay').classList.remove('off');}
+renderGuide();
+
+// ══ RESULT ══
+function openResult(role){
+  const icons={研究员:'🔬',策略师:'🎯',分析师:'📊',规划师:'📐'};
+  document.getElementById('resultIcon').textContent=icons[role]||'🤖';
+  document.getElementById('resultTitle').textContent=role+' · 分析报告';
+  document.getElementById('resultOverlay').classList.add('on');
+}
+function closeResult(){document.getElementById('resultOverlay').classList.remove('on');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeResult();});
+
+// ══ TOAST ══
+function doExec(){
+  const t=document.getElementById('toast');
+  t.textContent='✓ 任务已分发 · 执行总裁正在规划角色链路';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>

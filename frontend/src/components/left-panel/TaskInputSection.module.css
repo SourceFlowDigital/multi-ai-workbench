@@ -1,0 +1,86 @@
+.section {
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.field {
+  margin-bottom: 13px;
+}
+
+.field:last-child {
+  margin-bottom: 0;
+}
+
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+  font-family: "Space Grotesk";
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 9px 13px;
+  background: var(--navy-0);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+  font-family: "Noto Sans SC", "Space Grotesk", sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: var(--blue-bright);
+  box-shadow: 0 0 0 3px rgba(30, 95, 168, 0.18);
+}
+
+.field textarea {
+  resize: none;
+  min-height: 66px;
+  line-height: 1.6;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--muted-dim);
+}
+
+.btnExec {
+  width: 100%;
+  padding: 12px;
+  margin-top: 16px;
+  border: none;
+  border-radius: 28px;
+  background: var(--grad-steel);
+  color: #fff;
+  font-family: "Noto Sans SC", "Space Grotesk", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 1px;
+  box-shadow: 0 6px 24px rgba(30, 95, 168, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btnExec:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 32px rgba(30, 95, 168, 0.45);
+}
+
+.btnExec:active {
+  transform: scale(0.98);
+}
+
+.btnExec:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}

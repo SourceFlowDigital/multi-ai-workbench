@@ -1,0 +1,71 @@
+.cn {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 0.6vw, 8px);
+  padding: clamp(8px, 1vw, 12px) clamp(14px, 1.8vw, 20px);
+  border-radius: clamp(18px, 2.2vw, 24px);
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012));
+  border: 1px solid var(--line);
+  font-size: clamp(11px, 1.1vw, 13px);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  user-select: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.cn:hover {
+  border-color: rgba(201, 168, 76, 0.3);
+  box-shadow: 0 8px 30px rgba(3, 9, 20, 0.45);
+  transform: translateY(-2px);
+}
+
+.ni {
+  font-size: clamp(15px, 1.5vw, 18px);
+  line-height: 1;
+}
+
+.nn {
+  color: var(--ink);
+}
+
+.badge {
+  font-size: clamp(9px, 0.85vw, 10px);
+  font-weight: 600;
+  padding: clamp(3px, 0.4vw, 5px) clamp(8px, 1vw, 12px);
+  border-radius: 10px;
+  margin-left: 2px;
+}
+
+/* States */
+.done {
+  border-color: rgba(14, 181, 117, 0.25);
+}
+.done .badge {
+  background: rgba(14, 181, 117, 0.1);
+  color: #0eb575;
+}
+
+.running {
+  border-color: rgba(61, 134, 216, 0.35);
+  animation: glowPulse 2.8s ease-in-out infinite;
+}
+.running .badge {
+  background: rgba(61, 134, 216, 0.15);
+  color: #a5c8f0;
+}
+
+.idle .badge {
+  background: transparent;
+  color: var(--muted-dim);
+  border: 1px solid var(--line);
+}
+
+.failed {
+  border-color: rgba(239, 68, 68, 0.3);
+}
+.failed .badge {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}

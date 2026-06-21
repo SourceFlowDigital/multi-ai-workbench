@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>源流决策台 · 多AI协同决策工作台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+/* ═══════════════ DESIGN TOKENS ═══════════════ */
+:root {
+  --bg-deep: #050d1a;
+  --bg-navy: #081428;
+  --bg-purple: #0d0f2b;
+  --bg-card: rgba(255,255,255,.045);
+  --bg-card-hover: rgba(255,255,255,.075);
+  --bg-input: rgba(255,255,255,.05);
+  --blue: #4a8fe7;
+  --blue-glow: #6db3ff;
+  --blue-soft: #85c1ff;
+  --gold: #E8C86F;
+  --gold-deep: #c49b2c;
+  --gold-glow: #f5e6b8;
+  --green: #10B981;
+  --green-glow: #34d399;
+  --red: #ef4444;
+  --orange: #f59e0b;
+  --text: #edf2fa;
+  --text-dim: #9aacc5;
+  --text-muted: #5e7292;
+  --border: rgba(255,255,255,.10);
+  --border-active: rgba(74,143,231,.45);
+  --border-gold: rgba(232,200,111,.35);
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --shadow-card: 0 8px 32px rgba(0,0,0,.35);
+  --shadow-glow-blue: 0 0 20px rgba(74,143,231,.25);
+  --shadow-glow-gold: 0 0 20px rgba(232,200,111,.20);
+}
+
+/* ═══════════════ RESET ═══════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Inter","Noto Sans SC","Microsoft YaHei",sans-serif;
+  color:var(--text);
+  background:var(--bg-deep);
+  height:100vh; overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ═══════════════ COSMIC BACKGROUND ═══════════════ */
+.cosmic-bg{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(1100px 700px at 15% 10%, rgba(74,143,231,.18), transparent 55%),
+    radial-gradient(900px 600px at 85% 15%, rgba(232,200,111,.08), transparent 55%),
+    radial-gradient(800px 650px at 50% 90%, rgba(110,60,200,.13), transparent 60%),
+    radial-gradient(600px 500px at 30% 55%, rgba(74,143,231,.06), transparent 50%),
+    linear-gradient(170deg, var(--bg-deep) 0%, #081428 35%, var(--bg-purple) 100%);
+}
+.cosmic-bg::after{
+  content:"";position:absolute;inset:0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 18%, rgba(255,255,255,.35), transparent),
+    radial-gradient(1px 1px at 27% 33%, rgba(255,255,255,.25), transparent),
+    radial-gradient(1.5px 1.5px at 41% 8%, rgba(255,255,255,.30), transparent),
+    radial-gradient(1px 1px at 56% 44%, rgba(255,255,255,.20), transparent),
+    radial-gradient(1.5px 1.5px at 72% 22%, rgba(255,255,255,.28), transparent),
+    radial-gradient(1px 1px at 88% 38%, rgba(255,255,255,.22), transparent),
+    radial-gradient(1.5px 1.5px at 19% 72%, rgba(255,255,255,.20), transparent),
+    radial-gradient(1px 1px at 63% 78%, rgba(255,255,255,.18), transparent),
+    radial-gradient(1.5px 1.5px at 34% 58%, rgba(255,255,255,.24), transparent),
+    radial-gradient(1px 1px at 81% 68%, rgba(255,255,255,.20), transparent),
+    radial-gradient(2px 2px at 48% 14%, rgba(232,200,111,.22), transparent),
+    radial-gradient(1.5px 1.5px at 8% 62%, rgba(232,200,111,.18), transparent);
+  opacity:.75;
+}
+
+/* ═══════════════ MAIN LAYOUT ═══════════════ */
+.app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column;padding:16px 20px 14px;gap:12px;}
+
+/* ── TOP BAR ── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px 0 28px;height:62px;min-height:62px;
+  background:linear-gradient(135deg,rgba(255,255,255,.10),rgba(255,255,255,.035));
+  backdrop-filter:blur(28px) saturate(140%);
+  -webkit-backdrop-filter:blur(28px) saturate(140%);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  box-shadow:0 8px 40px rgba(0,0,0,.30), inset 0 1px rgba(255,255,255,.10);
+}
+.brand{display:flex;align-items:baseline;gap:14px;}
+.brand-name{
+  font-size:21px;font-weight:900;letter-spacing:1px;
+  background:linear-gradient(135deg,#f0dfa0 0%,var(--gold) 40%,#f0dfa0 70%,#c49b2c 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  text-shadow:none;
+  filter:drop-shadow(0 0 12px rgba(232,200,111,.30));
+}
+.brand-sub{
+  font-size:12px;font-weight:500;color:var(--text-dim);letter-spacing:1.5px;
+  padding-bottom:1px;
+}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.icon-btn{
+  width:38px;height:38px;border-radius:50%;border:1px solid var(--border);
+  background:var(--bg-card);color:var(--text-dim);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;font-size:16px;position:relative;
+}
+.icon-btn:hover{background:var(--bg-card-hover);color:var(--text);border-color:var(--border-active);box-shadow:var(--shadow-glow-blue);}
+.icon-btn .badge{
+  position:absolute;top:-2px;right:-2px;width:8px;height:8px;
+  background:var(--red);border-radius:50%;border:2px solid var(--bg-deep);
+}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#6366f1);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;}
+
+/* ── MAIN CONTENT ── */
+.main{display:flex;flex:1;gap:14px;min-height:0;}
+
+/* ── LEFT PANEL ── */
+.left-panel{width:380px;min-width:380px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;}
+.left-panel::-webkit-scrollbar{width:4px;}
+.left-panel::-webkit-scrollbar-track{background:transparent;}
+.left-panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:4px;}
+
+.card{
+  background:linear-gradient(160deg,rgba(255,255,255,.055),rgba(255,255,255,.025));
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:20px 22px;
+  box-shadow:var(--shadow-card);
+  transition:border-color .3s;
+}
+.card:hover{border-color:rgba(255,255,255,.15);}
+
+.card-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.card-icon{font-size:20px;}
+.card-title{font-size:15px;font-weight:700;color:var(--text);}
+.card-subtitle{font-size:11px;color:var(--text-muted);margin-top:1px;}
+
+/* ── TASK INPUT ── */
+.form-group{margin-bottom:14px;}
+.form-group:last-child{margin-bottom:0;}
+.label{display:block;font-size:12px;font-weight:600;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px;}
+.input,.textarea{
+  width:100%;padding:10px 14px;
+  background:var(--bg-input);border:1px solid var(--border);
+  border-radius:var(--radius);color:var(--text);
+  font-family:inherit;font-size:14px;outline:none;
+  transition:all .25s;
+}
+.input::placeholder,.textarea::placeholder{color:var(--text-muted);}
+.input:focus,.textarea:focus{border-color:var(--border-active);box-shadow:0 0 0 3px rgba(74,143,231,.12),var(--shadow-glow-blue);}
+.textarea{resize:none;min-height:72px;line-height:1.5;}
+
+.checkbox-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{position:relative;}
+.chip input{position:absolute;opacity:0;pointer-events:none;}
+.chip label{
+  display:flex;align-items:center;gap:6px;
+  padding:7px 13px;border-radius:20px;
+  background:var(--bg-input);border:1px solid var(--border);
+  color:var(--text-dim);font-size:12.5px;font-weight:500;
+  cursor:pointer;transition:all .2s;
+  white-space:nowrap;user-select:none;
+}
+.chip label:hover{border-color:var(--border-active);color:var(--text);}
+.chip input:checked+label{
+  background:rgba(74,143,231,.18);border-color:var(--blue);
+  color:var(--blue-soft);box-shadow:0 0 12px rgba(74,143,231,.15);
+}
+.chip.gold input:checked+label{background:rgba(232,200,111,.12);border-color:var(--gold);color:var(--gold);box-shadow:0 0 12px rgba(232,200,111,.12);}
+
+.btn-execute{
+  width:100%;padding:13px 20px;margin-top:4px;
+  border:none;border-radius:var(--radius);
+  background:linear-gradient(135deg,var(--gold-deep),var(--gold),#e8d07a);
+  color:#1a1200;font-size:15px;font-weight:700;
+  font-family:inherit;cursor:pointer;
+  letter-spacing:1px;
+  transition:all .25s;
+  box-shadow:0 4px 24px rgba(232,200,111,.20);
+  position:relative;overflow:hidden;
+}
+.btn-execute:hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 32px rgba(232,200,111,.35);
+}
+.btn-execute:active{transform:scale(.98);}
+
+/* ── EXECUTIVE CARD ── */
+.exec-card .status-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.exec-card .status-dot{
+  width:10px;height:10px;border-radius:50%;
+  background:var(--blue);animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{box-shadow:0 0 6px var(--blue-glow);}50%{box-shadow:0 0 18px var(--blue-glow),0 0 30px rgba(74,143,231,.3);}}
+.status-text{font-size:13px;color:var(--text-dim);}
+.route-suggestion{font-size:12px;color:var(--text-muted);line-height:1.6;}
+.route-suggestion span{color:var(--blue-soft);font-weight:600;}
+.route-flow{display:flex;align-items:center;gap:6px;margin-top:10px;flex-wrap:wrap;font-size:12px;}
+.route-arrow{color:var(--text-muted);}
+
+/* ── CUSTOM ROLE ── */
+.collapse-toggle{
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;user-select:none;
+  padding:4px 0;
+}
+.collapse-toggle .chevron{transition:transform .3s;font-size:12px;color:var(--text-muted);}
+.collapse-toggle.open .chevron{transform:rotate(180deg);}
+.collapse-body{display:none;margin-top:14px;}
+.collapse-body.show{display:block;}
+
+/* ── RIGHT CANVAS ── */
+.right-canvas{
+  flex:1;position:relative;
+  background:rgba(255,255,255,.018);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  box-shadow:var(--shadow-card),inset 0 0 80px rgba(74,143,231,.03);
+}
+.canvas-grid{
+  position:absolute;inset:0;
+  background-image:
+    radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:28px 28px;
+  pointer-events:none;
+}
+.canvas-label{
+  position:absolute;top:16px;left:20px;
+  font-size:11px;color:var(--text-muted);letter-spacing:1px;
+  font-weight:600;text-transform:uppercase;
+}
+
+/* ── SVG NODES ── */
+.nodes-layer{position:absolute;inset:0;z-index:2;}
+.node{
+  position:absolute;
+  display:flex;align-items:center;gap:10px;
+  padding:10px 18px;
+  border-radius:28px;
+  background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.035));
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border:1.5px solid var(--border);
+  font-size:13.5px;font-weight:600;
+  white-space:nowrap;
+  transition:all .3s;
+  box-shadow:0 4px 20px rgba(0,0,0,.25);
+  cursor:pointer;
+  user-select:none;
+}
+.node:hover{border-color:rgba(255,255,255,.25);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.35);}
+.node .n-icon{font-size:18px;line-height:1;}
+.node .n-label{color:var(--text);}
+.node .n-status{font-size:11px;font-weight:500;padding:2px 8px;border-radius:10px;}
+
+/* President node */
+.node-president{
+  left:50%;top:8%;transform:translateX(-50%);
+  border-color:var(--border-gold);
+  background:linear-gradient(135deg,rgba(232,200,111,.12),rgba(232,200,111,.04));
+  box-shadow:0 0 30px rgba(232,200,111,.12),0 4px 20px rgba(0,0,0,.30);
+  padding:12px 24px;
+}
+.node-president .n-icon{font-size:24px;}
+.node-president .n-label{font-size:15px;font-weight:700;color:var(--gold-glow);}
+
+/* Router node */
+.node-router{
+  left:50%;top:28%;transform:translateX(-50%);
+  border-color:var(--border-active);
+  background:linear-gradient(135deg,rgba(74,143,231,.14),rgba(74,143,231,.04));
+  box-shadow:0 0 28px rgba(74,143,231,.15),0 4px 20px rgba(0,0,0,.30);
+  padding:14px 28px;
+}
+.node-router .n-icon{font-size:22px;}
+.node-router .n-label{font-size:14px;font-weight:700;color:var(--blue-soft);}
+.node-router .n-desc{font-size:11px;color:var(--text-dim);margin-left:4px;font-weight:400;}
+.node-router .n-status{background:rgba(74,143,231,.20);color:var(--blue-glow);}
+
+/* Role nodes row */
+.role-row{position:absolute;top:54%;left:50%;transform:translateX(-50%);display:flex;gap:20px;}
+.role-row .node{position:relative;left:auto;top:auto;transform:none;}
+.node-role{border-radius:24px;gap:8px;padding:10px 20px;}
+.node-role.completed{border-color:rgba(16,185,129,.4);background:linear-gradient(135deg,rgba(16,185,129,.10),rgba(16,185,129,.03));}
+.node-role.completed .n-status{color:var(--green);}
+.node-role.running{border-color:var(--border-active);box-shadow:0 0 20px rgba(74,143,231,.18);animation:runningGlow 2.5s ease-in-out infinite;}
+.node-role.running .n-status{color:var(--blue-glow);}
+.node-role.idle{border-color:var(--border);}
+.node-role.idle .n-status{color:var(--text-muted);}
+
+@keyframes runningGlow{
+  0%,100%{box-shadow:0 0 16px rgba(74,143,231,.12);}
+  50%{box-shadow:0 0 30px rgba(74,143,231,.28);}
+}
+
+/* ── SVG CONNECTIONS ── */
+.connections-svg{position:absolute;inset:0;pointer-events:none;z-index:1;}
+.conn-line{fill:none;stroke-width:2;stroke:rgba(255,255,255,.15);}
+.conn-line.active{stroke:rgba(74,143,231,.35);stroke-dasharray:6 4;animation:dashFlow .8s linear infinite;}
+@keyframes dashFlow{to{stroke-dashoffset:-10;}}
+
+/* ── CANVAS CONTROLS ── */
+.canvas-controls{
+  position:absolute;bottom:16px;right:16px;z-index:10;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.zoom-btn{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--bg-card);border:1px solid var(--border);
+  color:var(--text-dim);font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;font-family:inherit;line-height:1;
+}
+.zoom-btn:hover{background:var(--bg-card-hover);color:var(--text);border-color:var(--border-active);}
+.zoom-level{font-size:11px;color:var(--text-muted);font-weight:600;}
+
+/* ── RESULT PANEL (slide) ── */
+.result-overlay{
+  position:fixed;inset:0;z-index:50;pointer-events:none;
+  display:flex;justify-content:flex-end;
+}
+.result-overlay.show{pointer-events:auto;}
+.result-overlay .backdrop{
+  position:absolute;inset:0;background:rgba(0,0,0,.35);
+  opacity:0;transition:opacity .35s;
+}
+.result-overlay.show .backdrop{opacity:1;}
+.result-panel{
+  position:relative;z-index:1;
+  width:440px;height:100vh;
+  background:linear-gradient(170deg,rgba(8,20,40,.98),rgba(13,15,43,.98));
+  backdrop-filter:blur(30px);
+  -webkit-backdrop-filter:blur(30px);
+  border-left:1px solid var(--border);
+  padding:24px;
+  display:flex;flex-direction:column;gap:18px;
+  transform:translateX(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;
+}
+.result-overlay.show .result-panel{transform:translateX(0);}
+.result-panel::-webkit-scrollbar{width:4px;}
+.result-panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.06);border-radius:4px;}
+
+.result-close{
+  align-self:flex-end;width:36px;height:36px;border-radius:50%;
+  background:var(--bg-card);border:1px solid var(--border);
+  color:var(--text-dim);font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.result-close:hover{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.4);color:var(--red);}
+
+.report-block{border-left:3px solid var(--gold);padding-left:16px;margin-bottom:16px;}
+.report-block h3{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:8px;}
+.report-block p{font-size:13px;color:var(--text-dim);line-height:1.6;}
+.report-list{margin-top:8px;}
+.report-list li{font-size:13px;color:var(--text-dim);line-height:1.7;list-style:none;position:relative;padding-left:16px;}
+.report-list li::before{content:"·";position:absolute;left:2px;color:var(--blue);font-weight:700;}
+
+.section-label{
+  font-size:11px;font-weight:700;color:var(--text-muted);
+  text-transform:uppercase;letter-spacing:1px;
+  margin-bottom:4px;
+}
+
+/* Chat area */
+.chat-area{flex:1;display:flex;flex-direction:column;gap:12px;min-height:0;}
+.chat-msg{display:flex;gap:10px;max-width:90%;}
+.chat-msg.ai{align-self:flex-start;}
+.chat-msg.user{align-self:flex-end;flex-direction:row-reverse;}
+.chat-bubble{
+  padding:10px 14px;border-radius:16px;font-size:13px;line-height:1.55;
+  background:rgba(255,255,255,.06);color:var(--text-dim);
+}
+.chat-msg.user .chat-bubble{background:rgba(74,143,231,.18);color:var(--blue-soft);}
+.chat-input-row{display:flex;gap:8px;margin-top:auto;padding-top:8px;}
+.chat-input-row input{
+  flex:1;padding:10px 14px;border-radius:20px;
+  background:var(--bg-input);border:1px solid var(--border);
+  color:var(--text);font-family:inherit;font-size:13px;outline:none;
+  transition:border-color .25s;
+}
+.chat-input-row input:focus{border-color:var(--border-active);}
+.chat-input-row button{
+  padding:10px 18px;border-radius:20px;border:none;
+  background:var(--blue);color:#fff;font-weight:600;
+  font-family:inherit;font-size:13px;cursor:pointer;
+  transition:all .2s;
+}
+.chat-input-row button:hover{background:#5b9ff0;box-shadow:0 0 16px rgba(74,143,231,.3);}
+
+/* ── CANVAS EMPTY STATE ── */
+.empty-hint{
+  position:absolute;inset:0;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;
+  pointer-events:none;opacity:.45;
+}
+.empty-hint .big-icon{font-size:56px;margin-bottom:14px;}
+.empty-hint .hint-text{font-size:15px;color:var(--text-dim);font-weight:500;}
+.empty-hint .hint-sub{font-size:12px;color:var(--text-muted);margin-top:6px;}
+
+/* ── GUIDE OVERLAY ── */
+.guide-overlay{
+  position:fixed;inset:0;z-index:100;
+  background:rgba(3,8,20,.88);
+  display:flex;align-items:center;justify-content:center;
+  opacity:1;transition:opacity .4s;
+}
+.guide-overlay.hidden{opacity:0;pointer-events:none;}
+.guide-card{
+  background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  backdrop-filter:blur(40px);
+  -webkit-backdrop-filter:blur(40px);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  padding:40px 48px;width:520px;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.50);
+}
+.guide-step-indicator{display:flex;justify-content:center;gap:8px;margin-bottom:28px;}
+.guide-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--border);transition:all .3s;
+}
+.guide-dot.active{background:var(--gold);box-shadow:0 0 10px rgba(232,200,111,.4);width:24px;border-radius:4px;}
+.guide-card h2{font-size:28px;font-weight:900;margin-bottom:8px;letter-spacing:.5px;
+  background:linear-gradient(135deg,#f0dfa0,var(--gold),#c49b2c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.guide-card .guide-desc{font-size:14px;color:var(--text-dim);line-height:1.7;margin-bottom:28px;}
+.guide-features{display:flex;gap:20px;justify-content:center;margin-bottom:28px;}
+.guide-feat{
+  width:100px;padding:16px 12px;border-radius:var(--radius);
+  background:rgba(255,255,255,.03);border:1px solid var(--border);
+  text-align:center;
+}
+.guide-feat .feat-icon{font-size:28px;margin-bottom:8px;}
+.guide-feat .feat-label{font-size:11px;color:var(--text-dim);line-height:1.4;}
+.guide-buttons{display:flex;gap:12px;justify-content:center;}
+.btn-primary{
+  padding:12px 32px;border-radius:24px;border:none;
+  background:linear-gradient(135deg,var(--blue),#5b8def);
+  color:#fff;font-weight:700;font-size:14px;
+  font-family:inherit;cursor:pointer;letter-spacing:.5px;
+  transition:all .2s;box-shadow:0 4px 20px rgba(74,143,231,.25);
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(74,143,231,.40);}
+.btn-ghost{
+  padding:12px 32px;border-radius:24px;border:1px solid var(--border);
+  background:transparent;color:var(--text-dim);
+  font-weight:600;font-size:14px;font-family:inherit;cursor:pointer;
+  transition:all .2s;
+}
+.btn-ghost:hover{border-color:var(--border-active);color:var(--text);}
+
+/* ── DEMO TASK: click canvas node to show result ── */
+.node{cursor:pointer;}
+.node-role:hover{transform:translateY(-3px);}
+
+/* ═══════════════ TOAST ═══════════════ */
+.toast{
+  position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);
+  background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.4);
+  color:var(--green);padding:12px 24px;border-radius:24px;
+  font-size:13px;font-weight:600;z-index:200;
+  transition:transform .4s cubic-bezier(.4,0,.2,1);
+  pointer-events:none;
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+</style>
+</head>
+<body>
+
+<!-- ═══════════ BACKGROUND ═══════════ -->
+<div class="cosmic-bg"></div>
+
+<!-- ═══════════ GUIDE OVERLAY ═══════════ -->
+<div class="guide-overlay" id="guideOverlay">
+  <div class="guide-card" id="guideCard">
+    <div class="guide-step-indicator">
+      <div class="guide-dot active" data-step="0"></div>
+      <div class="guide-dot" data-step="1"></div>
+      <div class="guide-dot" data-step="2"></div>
+    </div>
+    <div id="guideContent"></div>
+    <div class="guide-buttons" id="guideButtons"></div>
+  </div>
+</div>
+
+<!-- ═══════════ APP ═══════════ -->
+<div class="app">
+  <!-- ── TOP BAR ── -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-name">源流决策台</span>
+      <span class="brand-sub">多AI协同决策工作台</span>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" title="API Key 配置">⚙️</button>
+      <button class="icon-btn" title="任务历史"><span class="badge"></span>📋</button>
+      <button class="icon-btn" title="使用帮助" onclick="showGuide()">❓</button>
+      <div class="avatar" title="Sam">S</div>
+    </div>
+  </header>
+
+  <!-- ── MAIN ── -->
+  <div class="main">
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+      <!-- Task Input -->
+      <div class="card" style="border-top:2px solid var(--gold);">
+        <div class="card-header">
+          <span class="card-icon">🎯</span>
+          <div><div class="card-title">总裁下达任务</div></div>
+        </div>
+        <div class="form-group">
+          <label class="label">任务标题</label>
+          <input class="input" placeholder="例：评估宁夏光伏投资风险" value="评估宁夏2026年光伏投资风险">
+        </div>
+        <div class="form-group">
+          <label class="label">任务描述</label>
+          <textarea class="textarea" placeholder="详细描述你的需求...">综合分析宁夏地区光伏投资的政策环境、电网消纳、土地成本、补贴退坡等风险因素</textarea>
+        </div>
+        <div class="form-group">
+          <label class="label">AI 模型</label>
+          <div class="checkbox-grid">
+            <div class="chip"><input type="checkbox" id="m1" checked><label for="m1">🧠 Claude</label></div>
+            <div class="chip"><input type="checkbox" id="m2" checked><label for="m2">🔮 DeepSeek</label></div>
+            <div class="chip"><input type="checkbox" id="m3"><label for="m3">⚡ GPT</label></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="label">选择角色</label>
+          <div class="checkbox-grid">
+            <div class="chip gold"><input type="checkbox" id="r1" checked><label for="r1">🔬 研究员</label></div>
+            <div class="chip gold"><input type="checkbox" id="r2" checked><label for="r2">🎯 策略师</label></div>
+            <div class="chip gold"><input type="checkbox" id="r3"><label for="r3">📊 分析师</label></div>
+            <div class="chip gold"><input type="checkbox" id="r4"><label for="r4">💡 规划师</label></div>
+            <div class="chip gold"><input type="checkbox" id="r5"><label for="r5">✍️ 写手</label></div>
+            <div class="chip gold"><input type="checkbox" id="r6"><label for="r6">🛡️ 批判者</label></div>
+          </div>
+        </div>
+        <button class="btn-execute" onclick="executeTask()">▶ 执行任务</button>
+      </div>
+
+      <!-- Executive President -->
+      <div class="card exec-card">
+        <div class="card-header">
+          <span class="card-icon">⚡</span>
+          <div>
+            <div class="card-title">执行总裁 · 智能路由器</div>
+            <div class="card-subtitle">分析任务 → 推荐角色连线 → 汇总结论</div>
+          </div>
+        </div>
+        <div class="status-row">
+          <div class="status-dot"></div>
+          <span class="status-text">任务分析中…</span>
+        </div>
+        <div class="route-suggestion">
+          建议：<span>研究员</span> 分析政策环境 →
+          <span>策略师</span> 评估风险矩阵 →
+          <span>规划师</span> 输出投资建议
+        </div>
+        <div class="route-flow">
+          <span style="color:var(--gold);font-weight:600;">串行链路</span>
+          <span class="route-arrow">→</span>
+          <span style="color:var(--blue-soft);">研究员</span>
+          <span class="route-arrow">→</span>
+          <span style="color:var(--blue-soft);">策略师</span>
+          <span class="route-arrow">→</span>
+          <span style="color:var(--blue-soft);">规划师</span>
+        </div>
+      </div>
+
+      <!-- Custom Role -->
+      <div class="card">
+        <div class="collapse-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
+          <span style="font-size:13px;font-weight:600;color:var(--text-dim);">➕ 创建自定义角色</span>
+          <span class="chevron" style="font-size:12px;">▾</span>
+        </div>
+        <div class="collapse-body">
+          <div class="form-group">
+            <label class="label">角色名称</label>
+            <input class="input" placeholder="例：新能源政策分析师">
+          </div>
+          <div class="form-group">
+            <label class="label">角色描述</label>
+            <input class="input" placeholder="简述角色职责">
+          </div>
+          <div class="form-group">
+            <label class="label">系统提示词</label>
+            <textarea class="textarea" placeholder="定义角色的系统提示词..." style="min-height:60px;"></textarea>
+          </div>
+          <button class="btn-execute" style="font-size:13px;padding:10px;">保存角色</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT CANVAS -->
+    <div class="right-canvas" id="canvas">
+      <div class="canvas-grid"></div>
+      <div class="canvas-label">⚡ 协同画布 &nbsp;·&nbsp; Coze 风格</div>
+
+      <!-- SVG Connections -->
+      <svg class="connections-svg" id="connectionsSvg" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <!-- President → Router -->
+        <path d="M50,12 C50,18 50,22 50,28" class="conn-line active"/>
+        <!-- Router → Roles -->
+        <path d="M50,32 C50,36 26,42 26,54" class="conn-line"/>
+        <path d="M50,32 C50,36 42,42 42,54" class="conn-line"/>
+        <path d="M50,32 C50,36 58,42 58,54" class="conn-line"/>
+        <path d="M50,32 C50,36 74,42 74,54" class="conn-line"/>
+      </svg>
+
+      <!-- Nodes -->
+      <div class="nodes-layer">
+        <div class="node node-president" style="left:50%;top:8%;transform:translateX(-50%);">
+          <span class="n-icon">👤</span>
+          <span class="n-label">总裁</span>
+          <span style="font-size:11px;color:var(--text-muted);">评估宁夏光伏投资风险</span>
+        </div>
+        <div class="node node-router" style="left:50%;top:28%;transform:translateX(-50%);">
+          <span class="n-icon">⚡</span>
+          <span class="n-label">执行总裁</span>
+          <span class="n-desc">智能路由器</span>
+          <span class="n-status">分析中</span>
+        </div>
+        <!-- Role nodes row -->
+        <div class="role-row" style="top:54%;left:46%;transform:translateX(-50%);">
+          <div class="node node-role completed" onclick="openResult('研究员')">
+            <span class="n-icon">🔬</span>
+            <span class="n-label">研究员</span>
+            <span class="n-status">● 已完成</span>
+          </div>
+          <div class="node node-role running" onclick="openResult('策略师')">
+            <span class="n-icon">🎯</span>
+            <span class="n-label">策略师</span>
+            <span class="n-status">● 运行中</span>
+          </div>
+          <div class="node node-role idle" onclick="openResult('分析师')">
+            <span class="n-icon">📊</span>
+            <span class="n-label">数据分析师</span>
+            <span class="n-status">● 待命</span>
+          </div>
+          <div class="node node-role idle" onclick="openResult('规划师')">
+            <span class="n-icon">💡</span>
+            <span class="n-label">规划师</span>
+            <span class="n-status">● 待命</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty hint (hidden when nodes shown) -->
+      <div class="empty-hint" style="display:none;" id="emptyHint">
+        <span class="big-icon">🎯</span>
+        <span class="hint-text">下达你的第一个任务</span>
+        <span class="hint-sub">在左侧输入任务，选择 AI 模型和角色后点击执行</span>
+      </div>
+
+      <!-- Canvas controls -->
+      <div class="canvas-controls">
+        <button class="zoom-btn" title="放大">＋</button>
+        <span class="zoom-level">100%</span>
+        <button class="zoom-btn" title="缩小">－</button>
+        <button class="zoom-btn" title="重置">⌂</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ RESULT PANEL ═══════════ -->
+<div class="result-overlay" id="resultOverlay">
+  <div class="backdrop" onclick="closeResult()"></div>
+  <div class="result-panel">
+    <button class="result-close" onclick="closeResult()">✕</button>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:22px;" id="resultIcon">🔬</span>
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--text);" id="resultTitle">研究员 · 分析报告</div>
+        <div style="font-size:11px;color:var(--text-muted);">任务：评估宁夏2026年光伏投资风险</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">📊 分析报告</div>
+      <div style="background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--radius);padding:18px;">
+        <div class="report-block">
+          <h3>🎯 结论</h3>
+          <p>宁夏2026年光伏投资整体处于"谨慎乐观"区间。政策端支撑力强，但电网消纳瓶颈和补贴退坡构成核心风险，建议采用分阶段投资策略。</p>
+        </div>
+        <div class="report-block" style="border-left-color:var(--blue);">
+          <h3 style="color:var(--blue-soft);">📋 依据</h3>
+          <ul class="report-list">
+            <li>宁夏"十四五"新能源规划装机目标 50GW，当前达成率 68%，政策窗口期约 18-24 个月</li>
+            <li>2025 年宁夏弃光率 3.2%，局部地区（吴忠、中卫）达 5.8%，电网送出通道紧张</li>
+            <li>土地成本优势显著：宁夏光伏用地均价 180 元/亩/年，仅为东部省份的 1/5</li>
+            <li>绿电交易溢价约 0.02-0.05 元/kWh，市场化收益补充可部分对冲补贴退坡</li>
+          </ul>
+        </div>
+        <div class="report-block" style="border-left-color:var(--green);">
+          <h3 style="color:var(--green);">💡 建议</h3>
+          <ul class="report-list">
+            <li>首选吴忠、中卫以外区域，优先接入宁东-浙江/山东外送通道节点</li>
+            <li>建议一期 100MW 试探性投资，6 个月后评估消纳实况再决定二期</li>
+            <li>关注宁夏电力现货市场试点进度，绿电交易溢价空间可能扩大</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">💬 追问交流</div>
+      <div class="chat-area">
+        <div class="chat-msg ai">
+          <span style="font-size:16px;">🤖</span>
+          <div class="chat-bubble">根据我的分析，宁夏光伏投资最大的不确定性来自电网消纳。建议你重点关注宁东-浙江 ±800kV 特高压的剩余容量。</div>
+        </div>
+        <div class="chat-msg user">
+          <span style="font-size:16px;">👤</span>
+          <div class="chat-bubble">能详细说说中卫地区的消纳情况吗？</div>
+        </div>
+        <div class="chat-msg ai">
+          <span style="font-size:16px;">🤖</span>
+          <div class="chat-bubble">中卫地区 2025 年弃光率 5.8%，主要原因是银东直流外送容量接近饱和。但宁夏-湖南 ±800kV 特高压预计 2026Q3 投运，中卫作为送端将直接受益。建议关注该工程进度。</div>
+        </div>
+        <div class="chat-input-row">
+          <input placeholder="继续追问…">
+          <button>发送</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ TOAST ═══════════ -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════ GUIDE ═══════════ */
+const guideSteps = [
+  {
+    title:"欢迎来到源流决策台",
+    desc:"多AI协同决策工作台——让多个AI角色并行协作，帮你分析复杂问题，做出更聪明的决策。",
+    features:[
+      {icon:"🧠",label:"多模型并行"},
+      {icon:"👥",label:"角色协同"},
+      {icon:"🎨",label:"画布可视化"},
+    ],
+    btn:"下一步 →"
+  },
+  {
+    title:"三大核心能力",
+    desc:"选择AI模型和专家角色，执行总裁自动规划任务链路。每个角色独立分析，最后由执行总裁汇总结论。",
+    features:[
+      {icon:"🎯",label:"智能路由"},
+      {icon:"⚡",label:"并行执行"},
+      {icon:"📊",label:"结构化报告"},
+    ],
+    btn:"下一步 →"
+  },
+  {
+    title:"试试你的第一个任务",
+    desc:"左侧输入任务，选择角色和模型，点击执行——然后点击画布上的角色节点查看详细结果。准备好了吗？",
+    features:[
+      {icon:"✍️",label:"输入任务"},
+      {icon:"▶️",label:"点击执行"},
+      {icon:"👆",label:"查看结果"},
+    ],
+    btn:"开始使用 🚀"
+  }
+];
+
+let guideStep=0;
+function renderGuide(){
+  const s=guideSteps[guideStep];
+  const dots=document.querySelectorAll('.guide-dot');
+  dots.forEach((d,i)=>{d.classList.toggle('active',i===guideStep);});
+
+  let featHTML='';
+  if(s.features){
+    featHTML='<div class="guide-features">'+s.features.map(f=>`
+      <div class="guide-feat">
+        <div class="feat-icon">${f.icon}</div>
+        <div class="feat-label">${f.label}</div>
+      </div>
+    `).join('')+'</div>';
+  }
+  document.getElementById('guideContent').innerHTML=`
+    <h2>${s.title}</h2>
+    <p class="guide-desc">${s.desc}</p>
+    ${featHTML}
+  `;
+  document.getElementById('guideButtons').innerHTML=`
+    ${guideStep>0?`<button class="btn-ghost" onclick="prevStep()">← 上一步</button>`:''}
+    <button class="btn-primary" onclick="nextStep()">${s.btn}</button>
+    <button class="btn-ghost" onclick="skipGuide()">跳过引导</button>
+  `;
+}
+function nextStep(){
+  if(guideStep<guideSteps.length-1){guideStep++;renderGuide();}
+  else skipGuide();
+}
+function prevStep(){if(guideStep>0){guideStep--;renderGuide();}}
+function skipGuide(){document.getElementById('guideOverlay').classList.add('hidden');}
+function showGuide(){guideStep=0;renderGuide();document.getElementById('guideOverlay').classList.remove('hidden');}
+renderGuide();
+
+/* ═══════════ RESULT PANEL ═══════════ */
+let currentRole=null;
+function openResult(role){
+  currentRole=role;
+  const icons={研究员:'🔬',策略师:'🎯',分析师:'📊',规划师:'💡'};
+  document.getElementById('resultIcon').textContent=icons[role]||'🤖';
+  document.getElementById('resultTitle').textContent=role+' · 分析报告';
+  document.getElementById('resultOverlay').classList.add('show');
+}
+function closeResult(){document.getElementById('resultOverlay').classList.remove('show');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeResult();});
+
+/* ═══════════ EXECUTE ═══════════ */
+function executeTask(){
+  const toast=document.getElementById('toast');
+  toast.textContent='✅ 任务已分发 · 执行总裁正在规划角色链路';
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),3000);
+}
+
+/* ═══════════ EMPTY STATE CHECK ═══════════ */
+// Show empty hint if no nodes on canvas — currently demo nodes are shown
+</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+.reportBlock {
+  padding: 16px 18px;
+  border-radius: var(--radius-lg);
+  background: var(--navy-0);
+  margin-bottom: 12px;
+  border: 1px solid var(--line);
+}
+
+.reportBlock h4 {
+  font-family: "Space Grotesk";
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.reportBlock p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.reportBlock ul {
+  list-style: none;
+  padding: 0;
+}
+
+.reportBlock li {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.75;
+  padding-left: 16px;
+  position: relative;
+}
+
+.reportBlock li::before {
+  content: "·";
+  position: absolute;
+  left: 4px;
+  color: var(--blue-bright);
+  font-weight: 700;
+}
+
+/* Types */
+.conclusion {
+  border-left: 3px solid var(--gold);
+}
+.conclusion h4 {
+  color: var(--gold-bright);
+}
+
+.evidence {
+  border-left: 3px solid var(--blue-bright);
+}
+.evidence h4 {
+  color: #a5c8f0;
+}
+
+.advice {
+  border-left: 3px solid #0eb575;
+}
+.advice h4 {
+  color: #0eb575;
+}

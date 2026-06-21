@@ -1,0 +1,99 @@
+.chatSection {
+  margin-top: 22px;
+}
+
+.clabel {
+  font-family: "Space Grotesk";
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted-dim);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 14px;
+}
+
+.chatMsgs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.chatMsg {
+  display: flex;
+  gap: 8px;
+  max-width: 86%;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.ai {
+  align-self: flex-start;
+}
+
+.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.bubble {
+  padding: 9px 13px;
+  border-radius: 14px;
+}
+
+.ai .bubble {
+  background: var(--navy-0);
+  color: var(--muted);
+  border: 1px solid var(--line);
+}
+
+.user .bubble {
+  background: rgba(30, 95, 168, 0.2);
+  color: #c5d8f5;
+  border: 1px solid rgba(61, 134, 216, 0.2);
+}
+
+.aSm {
+  font-size: 17px;
+  flex-shrink: 0;
+}
+
+.chatInputRow {
+  display: flex;
+  gap: 8px;
+}
+
+.chatInputRow input {
+  flex: 1;
+  padding: 9px 15px;
+  border-radius: 22px;
+  background: var(--navy-0);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.chatInputRow input:focus {
+  border-color: var(--blue-bright);
+}
+
+.chatInputRow button {
+  padding: 9px 20px;
+  border-radius: 22px;
+  border: none;
+  background: var(--grad-steel);
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(30, 95, 168, 0.25);
+  transition: all 0.2s;
+}
+
+.chatInputRow button:hover {
+  box-shadow: 0 6px 22px rgba(30, 95, 168, 0.4);
+}

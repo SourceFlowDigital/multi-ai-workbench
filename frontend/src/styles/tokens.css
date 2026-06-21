@@ -1,0 +1,23 @@
+/* ══════ 品牌设计令牌（继承源流数字官网） ══════ */
+:root {
+  --navy-0: #040a16;
+  --navy-1: #060e1c;
+  --navy-2: #0a1526;
+  --navy-3: #0f1d33;
+  --blue: #1E5FA8;
+  --blue-bright: #3d86d8;
+  --blue-deep: #0d3a6b;
+  --gold: #C9A84C;
+  --gold-bright: #E8D29A;
+  --gold-dim: #8d6e28;
+  --ink: #eaf0fa;
+  --muted: #93a4bd;
+  --muted-dim: #5e7088;
+  --line: rgba(146, 170, 205, 0.14);
+  --line-strong: rgba(146, 170, 205, 0.22);
+  --grad-gold: linear-gradient(135deg, #F0E2B4 0%, #C9A84C 45%, #8d6e28 100%);
+  --grad-steel: linear-gradient(135deg, #d6e6fb 0%, #3d86d8 40%, #0d3a6b 100%);
+  --radius: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}

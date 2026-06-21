@@ -1,0 +1,29 @@
+.collapseHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.chev {
+  font-size: 10px;
+  color: var(--muted-dim);
+  transition: transform 0.25s;
+}
+
+.chevOpen {
+  transform: rotate(180deg);
+}
+
+.collapseBody {
+  display: none;
+  margin-top: 14px;
+}
+
+.collapseBodyOpen {
+  display: block;
+}

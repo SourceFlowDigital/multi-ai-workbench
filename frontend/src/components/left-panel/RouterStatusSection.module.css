@@ -1,0 +1,67 @@
+.section {
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.routerStatus {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.pulse {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--blue-bright);
+  animation: pulse 2.2s ease-in-out infinite;
+}
+
+.routerText {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.routerPath {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.rn {
+  color: #a5c8f0;
+  font-weight: 500;
+}
+
+.arrow {
+  color: var(--muted-dim);
+  font-size: 10px;
+}
+
+.routeHint {
+  font-size: 12px;
+  color: var(--muted-dim);
+  line-height: 1.65;
+  margin-top: 6px;
+}
+
+.routeHint em {
+  color: var(--gold-bright);
+  font-style: normal;
+}
+
+.mode {
+  color: var(--muted-dim);
+  font-size: 10px;
+  font-family: "Space Grotesk";
+}
+
+.idleText {
+  font-size: 12px;
+  color: var(--muted-dim);
+  margin-bottom: 10px;
+}

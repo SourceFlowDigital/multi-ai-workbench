@@ -1,0 +1,49 @@
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.chip {
+  position: relative;
+}
+
+.chip input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chip label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border-radius: 20px;
+  background: var(--navy-0);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.chip label:hover {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+.chip input:checked + label {
+  background: rgba(30, 95, 168, 0.15);
+  border-color: var(--blue-bright);
+  color: #a5c8f0;
+}
+
+/* Gold variant */
+.gold input:checked + label {
+  background: rgba(201, 168, 76, 0.09);
+  border-color: var(--gold);
+  color: var(--gold-bright);
+}

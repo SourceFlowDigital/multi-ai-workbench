@@ -1,0 +1,40 @@
+.zoomCtrls {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.zoomCtrls button {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(6, 14, 28, 0.7);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+  transition: all 0.15s;
+  line-height: 1;
+}
+
+.zoomCtrls button:hover {
+  background: rgba(15, 29, 51, 0.8);
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+
+.pct {
+  font-family: "Space Grotesk";
+  font-size: 10px;
+  color: var(--muted-dim);
+  font-weight: 600;
+}

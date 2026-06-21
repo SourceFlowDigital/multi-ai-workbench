@@ -1,0 +1,78 @@
+.section {
+  padding: 20px 22px;
+}
+
+.field {
+  margin-bottom: 13px;
+}
+
+.field:last-child {
+  margin-bottom: 0;
+}
+
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+  font-family: "Space Grotesk";
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 9px 13px;
+  background: var(--navy-0);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+  font-family: "Noto Sans SC", "Space Grotesk", sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: var(--blue-bright);
+  box-shadow: 0 0 0 3px rgba(30, 95, 168, 0.18);
+}
+
+.field textarea {
+  resize: none;
+  min-height: 56px;
+  line-height: 1.6;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--muted-dim);
+}
+
+.btnSave {
+  width: 100%;
+  padding: 9px;
+  margin-top: 8px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(30, 95, 168, 0.08);
+  color: var(--blue-bright);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnSave:hover {
+  background: rgba(30, 95, 168, 0.16);
+  border-color: var(--blue-bright);
+}
+
+.btnSave:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

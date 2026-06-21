@@ -1,0 +1,142 @@
+.guideOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(4, 10, 22, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.35s;
+}
+
+.off {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.guideCard {
+  background: linear-gradient(165deg, var(--navy-2), var(--navy-1));
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  padding: 42px 50px;
+  max-width: 500px;
+  text-align: center;
+}
+
+.guideSteps {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  margin-bottom: 28px;
+}
+
+.guideSteps span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(146, 170, 205, 0.15);
+  transition: all 0.3s;
+}
+
+.guideSteps .on {
+  background: var(--gold);
+  width: 22px;
+  border-radius: 4px;
+  box-shadow: 0 0 12px rgba(201, 168, 76, 0.3);
+}
+
+.guideCard h2 {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  background: var(--grad-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gd {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 26px;
+}
+
+.guideFeats {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  margin-bottom: 26px;
+}
+
+.gf {
+  width: 96px;
+  padding: 16px 10px;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--line);
+  text-align: center;
+  transition: border-color 0.3s;
+}
+
+.gf:hover {
+  border-color: rgba(201, 168, 76, 0.25);
+}
+
+.gfIcon {
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+
+.gfT {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.guideBtns {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.btnP {
+  padding: 11px 30px;
+  border-radius: 28px;
+  border: none;
+  background: var(--grad-steel);
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 22px rgba(30, 95, 168, 0.3);
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.btnP:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 30px rgba(30, 95, 168, 0.45);
+}
+
+.btnS {
+  padding: 11px 30px;
+  border-radius: 28px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.btnS:hover {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}

@@ -1,0 +1,67 @@
+.canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(100% 70% at 78% 18%, rgba(30, 95, 168, 0.16), transparent 55%),
+    radial-gradient(80% 60% at 12% 88%, rgba(201, 168, 76, 0.07), transparent 55%),
+    var(--navy-1);
+}
+
+.canvasLabel {
+  position: absolute;
+  top: 16px;
+  left: 22px;
+  font-family: "Space Grotesk";
+  font-size: 10px;
+  color: var(--muted-dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.canvasLabel::before {
+  content: "";
+  display: inline-block;
+  width: 18px;
+  height: 1px;
+  background: var(--grad-gold);
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.nodes {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  transition: transform 0.15s ease-out;
+}
+
+/* 空状态 */
+.emptyState {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.ebig {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.et {
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.es {
+  font-size: 11px;
+  color: var(--muted-dim);
+  margin-top: 4px;
+}

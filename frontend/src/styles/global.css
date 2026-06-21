@@ -1,0 +1,112 @@
+/* ══════ 全局重置与基础样式 ══════ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Noto Sans SC", "Space Grotesk", system-ui, sans-serif;
+  background: var(--navy-1);
+  color: var(--ink);
+  height: 100vh;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 3px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 英文数字字体 */
+.en {
+  font-family: "Space Grotesk", sans-serif;
+}
+
+/* 渐变文字工具类 */
+.gold-text {
+  background: var(--grad-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.steel-text {
+  background: var(--grad-steel);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ══════ 移动端响应式 ══════ */
+@media (max-width: 768px) {
+  body {
+    overflow: auto;
+  }
+
+  /* 左侧面板 → 底部抽屉 */
+  [data-left-panel] {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-height: 60vh;
+    border-right: none !important;
+    border-top: 1px solid var(--line);
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.4);
+    transform: translateY(0);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  [data-left-panel].hidden {
+    transform: translateY(calc(100% - 40px));
+  }
+
+  /* 移动端面板拖拽手柄 */
+  [data-left-panel]::before {
+    content: "";
+    display: block;
+    width: 32px;
+    height: 4px;
+    background: var(--line-strong);
+    border-radius: 2px;
+    margin: 8px auto 12px;
+  }
+
+  /* 画布全宽 */
+  [data-canvas] {
+    width: 100% !important;
+  }
+
+  /* 结果面板全屏 */
+  [data-result-panel] {
+    width: 100vw !important;
+  }
+
+  /* 引导卡片缩小 */
+  [data-guide-card] {
+    max-width: 90vw !important;
+    padding: 28px 20px !important;
+  }
+
+  /* TopBar 缩小 */
+  [data-topbar] {
+    padding: 0 14px !important;
+  }
+}
+
